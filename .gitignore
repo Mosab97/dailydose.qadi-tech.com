@@ -9,3 +9,7 @@ assets/front_end/modern/images/*
 /node_modules/
 firebase-config.js
 firebase-messaging-sw.js
+
+# Configuration files (environment-specific)
+application/config/config.php
+application/config/database.php
