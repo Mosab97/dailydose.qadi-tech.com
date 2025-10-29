@@ -57,7 +57,13 @@ class Product extends CI_Controller
             }
             $this->data['branch'] = fetch_details('', 'branch', 'id,branch_name');
 
-            $this->data['add_on_snaps'] = fetch_details(NULL, 'product_add_ons', '*', '', '', '', '', '', '', "", "", false, "title");
+            // Get unique add-ons by title using DISTINCT instead of GROUP BY to avoid SQL mode issues
+            $this->data['add_on_snaps'] = $this->db->distinct()
+                                                    ->select('title, id, description, price, status')
+                                                    ->from('product_add_ons')
+                                                    ->order_by('title', 'ASC')
+                                                    ->get()
+                                                    ->result_array();
             if (isset($_GET['edit_id']) && !empty($_GET['edit_id'])) {
                 $product_details = fetch_details(['id' => $_GET['edit_id']], 'products', '*');
                 if($product_details[0]['branch_id'] == $_SESSION['branch_id']){

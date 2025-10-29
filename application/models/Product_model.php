@@ -289,7 +289,7 @@ class Product_model extends CI_Model
 
         if (isset($_GET['sort']))
             if ($_GET['sort'] == 'id') {
-                $sort = "product_variants.id";
+                $sort = "pid";  // Sort by product ID since we're grouping by product
             } else {
                 $sort = $_GET['sort'];
             }
@@ -368,7 +368,7 @@ class Product_model extends CI_Model
         foreach ($product_count as $row) {
             $total = $row['total'];
         }
-        $search_res = $this->db->select('product_variants.id AS id, p.id as pid ,p.rating,p.no_of_ratings,p.name,p.branch_id as branch_id ,p.type, p.image, p.status,product_variants.price , product_variants.special_price, product_variants.stock, c.name as category ')
+        $search_res = $this->db->select('MIN(product_variants.id) AS id, p.id as pid ,p.rating,p.no_of_ratings,p.name,p.branch_id as branch_id ,p.type, p.image, p.status, MIN(product_variants.price) as price, MIN(product_variants.special_price) as special_price, SUM(product_variants.stock) as stock, c.name as category ')
             ->join(" categories c", "p.category_id=c.id ")
             ->join('product_variants', 'product_variants.product_id = p.id');
         $search_res->where('p.branch_id', $_SESSION['branch_id']);
@@ -414,19 +414,19 @@ class Product_model extends CI_Model
             $search_res->group_End();
         }
         if (isset($partner_id) && $partner_id != "") {
-            $count_res->where("p.partner_id", $partner_id);
+            $search_res->where("p.partner_id", $partner_id);
         }
 
         if (isset($p_status) && $p_status != NULL) {
-            $count_res->where("p.status", $p_status);
+            $search_res->where("p.status", $p_status);
         }
 
 
         if (isset($indicator) && $indicator != "") {
-            $count_res->where("p.indicator", $indicator);
+            $search_res->where("p.indicator", $indicator);
         }
         if (isset($product_type) && $product_type != "") {
-            $count_res->where("p.type", $product_type);
+            $search_res->where("p.type", $product_type);
         }
 
         $pro_search_res = $search_res->group_by('pid')->order_by($sort, $order)->limit($limit, $offset)->get('products p')->result_array();
