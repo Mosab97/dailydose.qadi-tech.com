@@ -1,0 +1,60 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dailydose-web
+    ports:
+      - "9000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./uploads:/var/www/html/uploads
+    depends_on:
+      - db
+    environment:
+      - CI_ENV=development
+    networks:
+      - dailydose-network
+
+  db:
+    image: mysql:8.0
+    container_name: dailydose-db
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+      MYSQL_DATABASE: dailydose_db
+      MYSQL_USER: dailydose_user
+      MYSQL_PASSWORD: dailydose_password
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - dailydose-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: dailydose-phpmyadmin
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "9080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword123
+    depends_on:
+      - db
+    networks:
+      - dailydose-network
+
+volumes:
+  db_data:
+
+networks:
+  dailydose-network:
+    driver: bridge
+

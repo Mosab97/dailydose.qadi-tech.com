@@ -1,0 +1,5298 @@
+{
+  "info": {
+    "name": "DailyDose API Collection",
+    "description": "Complete API collection for DailyDose application including Customer/User APIs and Rider APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "ae5e9696-b213-422c-9079-8f2588f89b38"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://your-domain.com",
+      "type": "string"
+    },
+    {
+      "key": "user_api_base",
+      "value": "{{base_url}}/app/v1/api",
+      "type": "string"
+    },
+    {
+      "key": "rider_api_base",
+      "value": "{{base_url}}/rider/app/v1/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication & User Management",
+      "item": [
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                },
+                {
+                  "key": "fcm_id",
+                  "value": "FCM_ID",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/login",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "description": "Login with mobile number"
+          }
+        },
+        {
+          "name": "update_fcm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "fcm_id",
+                  "value": "FCM_ID",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/update_fcm",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_fcm"
+              ]
+            }
+          }
+        },
+        {
+          "name": "reset_password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile_no",
+                  "value": "7894561235",
+                  "type": "text"
+                },
+                {
+                  "key": "new",
+                  "value": "pass@123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/reset_password",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "reset_password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_login_identity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_login_identity",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_login_identity"
+              ]
+            }
+          }
+        },
+        {
+          "name": "verify_user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/verify_user",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "verify_user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "verify_otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                },
+                {
+                  "key": "otp",
+                  "value": "123456",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/verify_otp",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "verify_otp"
+              ]
+            }
+          }
+        },
+        {
+          "name": "resend_otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/resend_otp",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "resend_otp"
+              ]
+            }
+          }
+        },
+        {
+          "name": "register_user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "John Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "john@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                },
+                {
+                  "key": "country_code",
+                  "value": "91",
+                  "type": "text"
+                },
+                {
+                  "key": "referral_code",
+                  "value": "MY_CODE",
+                  "type": "text"
+                },
+                {
+                  "key": "fcm_id",
+                  "value": "YOUR_FCM_ID",
+                  "type": "text"
+                },
+                {
+                  "key": "friends_code",
+                  "value": "45dsrwr",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "66.89",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "67.8",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/register_user",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "register_user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "sign_up",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "John Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "john@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                },
+                {
+                  "key": "country_code",
+                  "value": "91",
+                  "type": "text"
+                },
+                {
+                  "key": "referral_code",
+                  "value": "MY_CODE",
+                  "type": "text"
+                },
+                {
+                  "key": "fcm_id",
+                  "value": "YOUR_FCM_ID",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/sign_up",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "sign_up"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "34",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "hiten",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "7852347890",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "amangoswami@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "Time Square",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "45.453",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "45.453",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "value": "[]",
+                  "type": "text"
+                },
+                {
+                  "key": "city_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "referral_code",
+                  "value": "Userscode",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/update_user",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_my_account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/delete_my_account",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_my_account"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Location & Delivery",
+      "item": [
+        {
+          "name": "is_city_deliverable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "bhuj",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/is_city_deliverable",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "is_city_deliverable"
+              ]
+            }
+          }
+        },
+        {
+          "name": "is_order_deliverable",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "address_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/is_order_deliverable",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "is_order_deliverable"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_cities",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "sort",
+                  "value": "c.name",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "ASC",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "value",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_cities",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_cities"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_delivery_charges",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "address_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_delivery_charges",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_delivery_charges"
+              ]
+            }
+          }
+        },
+        {
+          "name": "search_location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "input",
+                  "value": "string",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/search_location",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "search_location"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_location_details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "place_id",
+                  "value": "string",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_location_details",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_location_details"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_location_details_by_lat_long",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "latitude",
+                  "value": "40.7128",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-74.0060",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_location_details_by_lat_long",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_location_details_by_lat_long"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_live_tracking_details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_live_tracking_details",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_live_tracking_details"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_time_slots",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "date",
+                  "value": "2024-01-01",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_time_slots",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_time_slots"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Address Management",
+      "item": [
+        {
+          "name": "add_address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "9727800638",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "#123,Time Square Empire,bhuj",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "1234",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "1234",
+                  "type": "text"
+                },
+                {
+                  "key": "area",
+                  "value": "umiya nagar",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "Home",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "John Smith",
+                  "type": "text"
+                },
+                {
+                  "key": "country_code",
+                  "value": "+91",
+                  "type": "text"
+                },
+                {
+                  "key": "alternate_mobile",
+                  "value": "9876543210",
+                  "type": "text"
+                },
+                {
+                  "key": "landmark",
+                  "value": "prince hotel",
+                  "type": "text"
+                },
+                {
+                  "key": "pincode",
+                  "value": "370001",
+                  "type": "text"
+                },
+                {
+                  "key": "state",
+                  "value": "Gujarat",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "India",
+                  "type": "text"
+                },
+                {
+                  "key": "is_default",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/add_address",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "add_address"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "9727800638",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "#123,Time Square,bhuj",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "Home",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "John Smith",
+                  "type": "text"
+                },
+                {
+                  "key": "country_code",
+                  "value": "+91",
+                  "type": "text"
+                },
+                {
+                  "key": "alternate_mobile",
+                  "value": "9876543210",
+                  "type": "text"
+                },
+                {
+                  "key": "landmark",
+                  "value": "prince hotel",
+                  "type": "text"
+                },
+                {
+                  "key": "area",
+                  "value": "umiya nagar",
+                  "type": "text"
+                },
+                {
+                  "key": "pincode",
+                  "value": "370001",
+                  "type": "text"
+                },
+                {
+                  "key": "state",
+                  "value": "Gujarat",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "India",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "1234",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "1234",
+                  "type": "text"
+                },
+                {
+                  "key": "is_default",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/update_address",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_address"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "3",
+                  "type": "text"
+                },
+                {
+                  "key": "address_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "partner_id",
+                  "value": "1234",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_address",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_address"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "3",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/delete_address",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_address"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Content & UI",
+      "item": [
+        {
+          "name": "get_slider_images",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_slider_images",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_slider_images"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_offer_images",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_offer_images",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_offer_images"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "type",
+                  "value": "all",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_settings",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_sections",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "section_id",
+                  "value": "4",
+                  "type": "text"
+                },
+                {
+                  "key": "top_rated_foods",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "p_limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "p_offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "p_sort",
+                  "value": "pv.price",
+                  "type": "text"
+                },
+                {
+                  "key": "p_order",
+                  "value": "asc",
+                  "type": "text"
+                },
+                {
+                  "key": "filter_by",
+                  "value": "p.id",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "123",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_sections",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_sections"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_faqs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_faqs",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_faqs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_languages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_languages",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_languages"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_branches",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "city_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_branches",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_branches"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products & Categories",
+      "item": [
+        {
+          "name": "get_categories",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_categories",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "101",
+                  "type": "text"
+                },
+                {
+                  "key": "category_id",
+                  "value": "29",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "keyword",
+                  "type": "text"
+                },
+                {
+                  "key": "tags",
+                  "value": "tag1, tag2",
+                  "type": "text"
+                },
+                {
+                  "key": "highlights",
+                  "value": "tag1, tag2",
+                  "type": "text"
+                },
+                {
+                  "key": "attribute_value_ids",
+                  "value": "34,23,12",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "p.id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                },
+                {
+                  "key": "top_rated_foods",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "discount",
+                  "value": "5",
+                  "type": "text"
+                },
+                {
+                  "key": "min_price",
+                  "value": "10000",
+                  "type": "text"
+                },
+                {
+                  "key": "max_price",
+                  "value": "50000",
+                  "type": "text"
+                },
+                {
+                  "key": "partner_id",
+                  "value": "1255",
+                  "type": "text"
+                },
+                {
+                  "key": "product_ids",
+                  "value": "19,20",
+                  "type": "text"
+                },
+                {
+                  "key": "product_variant_ids",
+                  "value": "44,45,40",
+                  "type": "text"
+                },
+                {
+                  "key": "vegetarian",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "filter_by",
+                  "value": "p.id",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "123",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "123",
+                  "type": "text"
+                },
+                {
+                  "key": "city_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_products",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_offline_products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "category_id",
+                  "value": "29",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_offline_products",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_offline_products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_partners",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "city_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "p.id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                },
+                {
+                  "key": "top_rated_partner",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "only_opened_partners",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "vegetarian",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "123",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_partners",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_partners"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart Management",
+      "item": [
+        {
+          "name": "manage_cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "product_variant_id",
+                  "value": "23",
+                  "type": "text"
+                },
+                {
+                  "key": "clear_cart",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "is_saved_for_later",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "qty",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "add_on_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "add_on_qty",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/manage_cart",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "manage_cart"
+              ]
+            },
+            "description": "Add/Update cart items"
+          }
+        },
+        {
+          "name": "get_user_cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "is_saved_for_later",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_user_cart",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_user_cart"
+              ]
+            }
+          }
+        },
+        {
+          "name": "remove_from_cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "product_variant_id",
+                  "value": "23",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/remove_from_cart",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "remove_from_cart"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "place_order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "5",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "9974692496",
+                  "type": "text"
+                },
+                {
+                  "key": "product_variant_id",
+                  "value": "1,2,3",
+                  "type": "text"
+                },
+                {
+                  "key": "quantity",
+                  "value": "3,3,1",
+                  "type": "text"
+                },
+                {
+                  "key": "total",
+                  "value": "60.0",
+                  "type": "text"
+                },
+                {
+                  "key": "delivery_charge",
+                  "value": "20.0",
+                  "type": "text"
+                },
+                {
+                  "key": "tax_amount",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "tax_percentage",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "final_total",
+                  "value": "55",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "40.1451",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "-45.4545",
+                  "type": "text"
+                },
+                {
+                  "key": "promo_code",
+                  "value": "NEW20",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_method",
+                  "value": "COD",
+                  "type": "text"
+                },
+                {
+                  "key": "address_id",
+                  "value": "17",
+                  "type": "text"
+                },
+                {
+                  "key": "is_wallet_used",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "wallet_balance_used",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "active_status",
+                  "value": "pending",
+                  "type": "text"
+                },
+                {
+                  "key": "order_note",
+                  "value": "text",
+                  "type": "text"
+                },
+                {
+                  "key": "delivery_tip",
+                  "value": "text",
+                  "type": "text"
+                },
+                {
+                  "key": "is_self_pick_up",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/place_order",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "place_order"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_orders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "101",
+                  "type": "text"
+                },
+                {
+                  "key": "id",
+                  "value": "123",
+                  "type": "text"
+                },
+                {
+                  "key": "active_status",
+                  "value": "pending",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "o.id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                },
+                {
+                  "key": "download_invoice",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_orders",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_order_status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "status",
+                  "value": "cancelled",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "1201",
+                  "type": "text"
+                },
+                {
+                  "key": "reason",
+                  "value": "test",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/update_order_status",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_order_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/delete_order",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_order"
+              ]
+            }
+          }
+        },
+        {
+          "name": "re_order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/re_order",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "re_order"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ratings",
+      "item": [
+        {
+          "name": "set_product_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "21",
+                  "type": "text"
+                },
+                {
+                  "key": "product_id",
+                  "value": "33",
+                  "type": "text"
+                },
+                {
+                  "key": "rating",
+                  "value": "4.2",
+                  "type": "text"
+                },
+                {
+                  "key": "comment",
+                  "value": "Done",
+                  "type": "text"
+                },
+                {
+                  "key": "images[]",
+                  "value": "[]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/set_product_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "set_product_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_product_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "product_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "type",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_product_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_product_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_product_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rating_id",
+                  "value": "32",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/delete_product_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_product_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "set_rider_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "21",
+                  "type": "text"
+                },
+                {
+                  "key": "rider_id",
+                  "value": "33",
+                  "type": "text"
+                },
+                {
+                  "key": "rating",
+                  "value": "4.2",
+                  "type": "text"
+                },
+                {
+                  "key": "comment",
+                  "value": "Done",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/set_rider_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "set_rider_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_rider_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rider_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "u.id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_rider_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_rider_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_rider_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rating_id",
+                  "value": "32",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/delete_rider_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_rider_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "set_order_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "21",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "33",
+                  "type": "text"
+                },
+                {
+                  "key": "rating",
+                  "value": "4.2",
+                  "type": "text"
+                },
+                {
+                  "key": "comment",
+                  "value": "Done",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/set_order_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "set_order_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_order_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_order_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_order_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_order_rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rating_id",
+                  "value": "32",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/delete_order_rating",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_order_rating"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_partner_ratings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "partner_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_partner_ratings",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_partner_ratings"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "add_to_favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "partners",
+                  "type": "text"
+                },
+                {
+                  "key": "type_id",
+                  "value": "60",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/add_to_favorites",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "add_to_favorites"
+              ]
+            }
+          }
+        },
+        {
+          "name": "remove_from_favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "partners",
+                  "type": "text"
+                },
+                {
+                  "key": "type_id",
+                  "value": "60",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/remove_from_favorites",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "remove_from_favorites"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "partners",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_favorites",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_favorites"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "get_notifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_notifications",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_notifications"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "add_transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "transaction_type",
+                  "value": "transaction",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "23",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "COD",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_method",
+                  "value": "razorpay",
+                  "type": "text"
+                },
+                {
+                  "key": "txn_id",
+                  "value": "201567892154",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "450",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "success",
+                  "type": "text"
+                },
+                {
+                  "key": "message",
+                  "value": "Done",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/add_transaction",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "add_transaction"
+              ]
+            }
+          }
+        },
+        {
+          "name": "transactions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "transaction_type",
+                  "value": "transaction",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "COD",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "Search keyword",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/transactions",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "transactions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "send_withdrawal_request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_address",
+                  "value": "12343535",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "560",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/send_withdrawal_request",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "send_withdrawal_request"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_withdrawal_request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_withdrawal_request",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_withdrawal_request"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Support Tickets",
+      "item": [
+        {
+          "name": "get_ticket_types",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_ticket_types",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_ticket_types"
+              ]
+            }
+          }
+        },
+        {
+          "name": "add_ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "ticket_type_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "subject",
+                  "value": "product_image not displaying",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "test@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "its not showing images of products in web",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/add_ticket",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "add_ticket"
+              ]
+            }
+          }
+        },
+        {
+          "name": "edit_ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "ticket_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "ticket_type_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "subject",
+                  "value": "product_image not displaying",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "test@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "its not showing attachments of products in web",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "3",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/edit_ticket",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "edit_ticket"
+              ]
+            }
+          }
+        },
+        {
+          "name": "send_message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_type",
+                  "value": "user",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "ticket_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "message",
+                  "value": "test",
+                  "type": "text"
+                },
+                {
+                  "key": "attachments[]",
+                  "value": "[]",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/send_message",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "send_message"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_tickets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "ticket_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "ticket_type_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "Search keyword",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_tickets",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_tickets"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_messages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "ticket_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "user_type",
+                  "value": "user",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "Search keyword",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_messages",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_messages"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Promo Codes",
+      "item": [
+        {
+          "name": "validate_promo_code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "promo_code",
+                  "value": "NEWOFF10",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "28",
+                  "type": "text"
+                },
+                {
+                  "key": "final_total",
+                  "value": "300",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/validate_promo_code",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "validate_promo_code"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_promo_codes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "search",
+                  "value": "Search keyword",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_promo_codes",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_promo_codes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "validate_refer_code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "referral_code",
+                  "value": "USERS_CODE_TO_BE_VALIDATED",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/validate_refer_code",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "validate_refer_code"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - PayPal",
+      "item": [
+        {
+          "name": "get_paypal_link",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "150",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_paypal_link",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_paypal_link"
+              ]
+            }
+          }
+        },
+        {
+          "name": "paypal_transaction_webview",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "150",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/paypal_transaction_webview",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "paypal_transaction_webview"
+              ]
+            }
+          }
+        },
+        {
+          "name": "app_payment_status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "success",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/app_payment_status",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "app_payment_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ipn",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/ipn",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "ipn"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - Stripe",
+      "item": [
+        {
+          "name": "payment_intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/payment_intent",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "payment_intent"
+              ]
+            }
+          }
+        },
+        {
+          "name": "stripe_webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/stripe_webhook",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "stripe_webhook"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - Razorpay",
+      "item": [
+        {
+          "name": "razorpay_create_order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/razorpay_create_order",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "razorpay_create_order"
+              ]
+            }
+          }
+        },
+        {
+          "name": "razorpay_webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/razorpay_webhook",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "razorpay_webhook"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - Paytm",
+      "item": [
+        {
+          "name": "generate_paytm_checksum",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "1099",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "industry_type",
+                  "value": "Industry",
+                  "type": "text"
+                },
+                {
+                  "key": "channel_id",
+                  "value": "WAP",
+                  "type": "text"
+                },
+                {
+                  "key": "website",
+                  "value": "website link",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/generate_paytm_checksum",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "generate_paytm_checksum"
+              ]
+            }
+          }
+        },
+        {
+          "name": "generate_paytm_txn_token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100.00",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "102",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "industry_type",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "channel_id",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "website",
+                  "value": "",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/generate_paytm_txn_token",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "generate_paytm_txn_token"
+              ]
+            }
+          }
+        },
+        {
+          "name": "validate_paytm_checksum",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "paytm_checksum",
+                  "value": "PAYTM_CHECKSUM",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "1001",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "1099",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "industry_type",
+                  "value": "Industry",
+                  "type": "text"
+                },
+                {
+                  "key": "channel_id",
+                  "value": "WAP",
+                  "type": "text"
+                },
+                {
+                  "key": "website",
+                  "value": "website link",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/validate_paytm_checksum",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "validate_paytm_checksum"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - Flutterwave",
+      "item": [
+        {
+          "name": "flutterwave_webview",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "reference",
+                  "value": "eShop-165232013-400",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/flutterwave_webview",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "flutterwave_webview"
+              ]
+            }
+          }
+        },
+        {
+          "name": "flutterwave_payment_response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "reference",
+                  "value": "eShop-165232013-400",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/flutterwave_payment_response",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "flutterwave_payment_response"
+              ]
+            }
+          }
+        },
+        {
+          "name": "flutterwave_webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/flutterwave_webhook",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "flutterwave_webhook"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - Midtrans",
+      "item": [
+        {
+          "name": "create_midtrans_transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/create_midtrans_transaction",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "create_midtrans_transaction"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_midtrans_transaction_status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/get_midtrans_transaction_status",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_midtrans_transaction_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "midtrans_payment_process",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "success",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/midtrans_payment_process",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "midtrans_payment_process"
+              ]
+            }
+          }
+        },
+        {
+          "name": "midtrans_wallet_transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/midtrans_wallet_transaction",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "midtrans_wallet_transaction"
+              ]
+            }
+          }
+        },
+        {
+          "name": "midtrans_webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/midtrans_webhook",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "midtrans_webhook"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments - PhonePe",
+      "item": [
+        {
+          "name": "phonepe_webview",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/phonepe_webview",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "phonepe_webview"
+              ]
+            }
+          }
+        },
+        {
+          "name": "phonepe_app",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/phonepe_app",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "phonepe_app"
+              ]
+            }
+          }
+        },
+        {
+          "name": "phonepe_web",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "11",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "73",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{user_api_base}}/phonepe_web",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "phonepe_web"
+              ]
+            }
+          }
+        },
+        {
+          "name": "phonepe_webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{user_api_base}}/phonepe_webhook",
+              "host": [
+                "{{",
+                "user_api_base",
+                "}}"
+              ],
+              "path": [
+                "phonepe_webhook"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rider APIs",
+      "item": [
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile",
+                  "value": "9874565478",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "12345678",
+                  "type": "text"
+                },
+                {
+                  "key": "fcm_id",
+                  "value": "FCM_ID",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/login",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_rider_details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "15",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_rider_details",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_rider_details"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_orders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "101",
+                  "type": "text"
+                },
+                {
+                  "key": "active_status",
+                  "value": "pending",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_orders",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_fund_transfers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "101",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_fund_transfers",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_fund_transfers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "34",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "hiten",
+                  "type": "text"
+                },
+                {
+                  "key": "mobile",
+                  "value": "7852347890",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "amangoswami@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "address",
+                  "type": "text"
+                },
+                {
+                  "key": "old",
+                  "value": "12345",
+                  "type": "text"
+                },
+                {
+                  "key": "new",
+                  "value": "345234",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/update_user",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_fcm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "fcm_id",
+                  "value": "FCM_ID",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/update_fcm",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_fcm"
+              ]
+            }
+          }
+        },
+        {
+          "name": "reset_password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile_no",
+                  "value": "7894561235",
+                  "type": "text"
+                },
+                {
+                  "key": "new",
+                  "value": "pass@123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/reset_password",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "reset_password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "verify_user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mobile",
+                  "value": "1234567890",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "test@gmail.com",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/verify_user",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "verify_user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "type",
+                  "value": "rider_privacy_policy",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_settings",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "send_withdrawal_request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_address",
+                  "value": "12343535",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "560",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/send_withdrawal_request",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "send_withdrawal_request"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_withdrawal_request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "10",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_withdrawal_request",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_withdrawal_request"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_order_status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rider_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "137",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "confirmed",
+                  "type": "text"
+                },
+                {
+                  "key": "otp",
+                  "value": "1234",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/update_order_status",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_order_status"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_pending_orders",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "user_id",
+                  "value": "101",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_pending_orders",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_pending_orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "update_order_request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rider_id",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "order_id",
+                  "value": "137",
+                  "type": "text"
+                },
+                {
+                  "key": "accept_order",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/update_order_request",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "update_order_request"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get_rider_cash_collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "rider_id",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "rider_cash",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sort",
+                  "value": "id",
+                  "type": "text"
+                },
+                {
+                  "key": "order",
+                  "value": "DESC",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": "value",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/get_rider_cash_collection",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "get_rider_cash_collection"
+              ]
+            }
+          }
+        },
+        {
+          "name": "manage_live_tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "137",
+                  "type": "text"
+                },
+                {
+                  "key": "order_status",
+                  "value": "out_for_delivery",
+                  "type": "text"
+                },
+                {
+                  "key": "latitude",
+                  "value": "12345678",
+                  "type": "text"
+                },
+                {
+                  "key": "longitude",
+                  "value": "14654654",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/manage_live_tracking",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "manage_live_tracking"
+              ]
+            }
+          }
+        },
+        {
+          "name": "delete_live_tracking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "order_id",
+                  "value": "137",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{rider_api_base}}/delete_live_tracking",
+              "host": [
+                "{{",
+                "rider_api_base",
+                "}}"
+              ],
+              "path": [
+                "delete_live_tracking"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

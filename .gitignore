@@ -13,3 +13,5 @@ firebase-messaging-sw.js
 # Configuration files (environment-specific)
 application/config/config.php
 application/config/database.php
+
+application/sessions/*

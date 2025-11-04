@@ -1,0 +1,17 @@
+.git
+.gitignore
+README.md
+Dockerfile
+docker-compose.yml
+.dockerignore
+.env
+.env.local
+*.log
+node_modules
+.vscode
+.idea
+*.md
+md-files/
+DailyDose_API_Collection.postman_collection.json
+generate_postman_collection.py
+
