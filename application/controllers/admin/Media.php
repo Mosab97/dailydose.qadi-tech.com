@@ -38,7 +38,12 @@ class Media extends CI_Controller
     {
       
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-            redirect('admin/login', 'refresh');
+            $this->response['error'] = true;
+            $this->response['message'] = 'Unauthorized access. Please login.';
+            $this->response['csrfName'] = $this->security->get_csrf_token_name();
+            $this->response['csrfHash'] = $this->security->get_csrf_hash();
+            http_response_code(403);
+            print_r(json_encode($this->response));
             exit();
         }
         if (print_msg(!has_permissions('create', 'media'), PERMISSION_ERROR_MSG, 'media')) {
