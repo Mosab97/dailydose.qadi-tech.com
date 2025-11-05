@@ -53,8 +53,42 @@ class Media extends CI_Controller
         $target_path = FCPATH . MEDIA_PATH . $year . '/';
         $sub_directory = MEDIA_PATH . $year . '/';
 
+        // Check if parent directory exists and is writable
+        $parent_dir = FCPATH . MEDIA_PATH;
+        if (!file_exists($parent_dir)) {
+            // Try to create parent directory if it doesn't exist
+            if (!@mkdir($parent_dir, 0755, true)) {
+                $this->response['error'] = true;
+                $this->response['csrfName'] = $this->security->get_csrf_token_name();
+                $this->response['csrfHash'] = $this->security->get_csrf_hash();
+                $this->response['message'] = "Unable to create media directory. Please check server permissions for: " . $parent_dir;
+                http_response_code(500);
+                print_r(json_encode($this->response));
+                return false;
+            }
+        }
+        
+        if (!is_writable($parent_dir)) {
+            $this->response['error'] = true;
+            $this->response['csrfName'] = $this->security->get_csrf_token_name();
+            $this->response['csrfHash'] = $this->security->get_csrf_hash();
+            $this->response['message'] = "Media directory is not writable. Please check server permissions for: " . $parent_dir;
+            http_response_code(500);
+            print_r(json_encode($this->response));
+            return false;
+        }
+
+        // Create year directory if it doesn't exist
         if (!file_exists($target_path)) {
-            mkdir($target_path, 0777, true);
+            if (!@mkdir($target_path, 0755, true)) {
+                $this->response['error'] = true;
+                $this->response['csrfName'] = $this->security->get_csrf_token_name();
+                $this->response['csrfHash'] = $this->security->get_csrf_hash();
+                $this->response['message'] = "Unable to create directory for year " . $year . ". Please check server permissions for: " . $target_path;
+                http_response_code(500);
+                print_r(json_encode($this->response));
+                return false;
+            }
         }
 
         $temp_array = $media_ids = $other_images_new_name = array();
