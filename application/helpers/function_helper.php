@@ -403,23 +403,28 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     }
     $t = &get_instance();
 
+	// Using base joins `ptg`/`tgs` added above for tag filters; avoid extra joins entirely
+
     // 1. sort product wise done
     if ($sort == 'pv.price' && !empty($sort) && $sort != NULL) {
         $t->db->order_by("IF( pv.special_price > 0 , pv.special_price , pv.price )" . $order, False);
     }
 
-    //2. status wise products done
-    if (isset($filter['show_only_active_products']) && $filter['show_only_active_products'] == 0) {
-        $where = [];
-    } else {
-        $where = ['p.status' => 1, 'pv.status' => 1, 'sd.status' => 1, 'p.branch_id' => $branch_id];
-    }
+	//2. status wise products done
+	if (isset($filter['show_only_active_products']) && $filter['show_only_active_products'] == 0) {
+		$where = [];
+	} else {
+		$where = ['p.status' => 1, 'pv.status' => 1, 'p.branch_id' => $branch_id];
+	}
 
-    if (isset($filter['currently_available']) && $filter['currently_available'] == 0) {
-        $where = [];
-    } else {
-        $where = ['CURTIME() BETWEEN start_time AND end_time', 'p.status' => 1, 'p.branch_id' => $branch_id];
-    }
+	// Store time availability flag for later use
+	$__applyTimeWindow = true;
+	if (isset($filter['currently_available']) && $filter['currently_available'] == 0) {
+		$where = $where; // keep previous conditions only
+		$__applyTimeWindow = false;
+	} else {
+		$where = ['p.status' => 1, 'p.branch_id' => $branch_id];
+	}
 
     // 3. discount filter done
     $discount_filter_data = (isset($filter['discount']) && !empty($filter['discount'])) ? ' ( if(pv.special_price > 0,( (pv.price-pv.special_price)/pv.price)*100,0)) as cal_discount_percentage, ' : '';
@@ -469,13 +474,11 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         }
         $t->db->or_like('p.name', trim($filter['search']));
         $t->db->or_like('p.category_id', intval($category_search));
-        $t->db->join('`product_tags` pt', 'pt.product_id = p.id', 'LEFT');
-        $t->db->join('`tags` tg', 'tg.id = pt.tag_id', 'LEFT');
         foreach ($p_tags as $i => $tagsearch) {
             if ($i == 0) {
-                $t->db->like('tg.title', trim($tagsearch));
+				$t->db->like('tgs.title', trim($tagsearch));
             } else {
-                $t->db->or_like('tg.title', trim($tagsearch));
+				$t->db->or_like('tgs.title', trim($tagsearch));
             }
         }
         $t->db->group_end();
@@ -484,14 +487,12 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     // search by tags done
     if (isset($filter) && !empty($filter['tags'])) {
         $p_tags = explode(",", $filter['tags']);
-        $t->db->join('`product_tags` pt', 'pt.product_id = p.id', 'LEFT');
-        $t->db->join('`tags` tg', 'tg.id = pt.tag_id', 'LEFT');
         $t->db->group_Start();
         foreach ($p_tags as $i => $tag) {
             if ($i == 0) {
-                $t->db->like('tg.title', trim($tag));
+				$t->db->like('tgs.title', trim($tag));
             } else {
-                $t->db->or_like('tg.title', trim($tag));
+				$t->db->or_like('tgs.title', trim($tag));
             }
         }
         $t->db->group_end();
@@ -563,13 +564,13 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     }
 
     $where_near_by = "";
-    if (isset($filter) && !empty($filter['city_id']) && $filter['city_id'] != "" && $filter['city_id'] != "null" && !empty($filter['latitude']) && $filter['latitude'] != "null" && $filter['longitude'] != "null" && !empty($filter['longitude'])) {
-        $where_near_by = "((ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND u.city = " . $filter['city_id'] . ")";
-        foreach ($city_data as $value) {
-            $where_near_by .= " OR (ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND u.city = " . $value['id'] . ")";
-        }
-        $t->db->where($where_near_by . ")");
-    }
+	if (isset($filter) && !empty($filter['city_id']) && $filter['city_id'] != "" && $filter['city_id'] != "null" && !empty($filter['latitude']) && $filter['latitude'] != "null" && $filter['longitude'] != "null" && !empty($filter['longitude'])) {
+		$where_near_by = "((ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND b.city_id = " . $filter['city_id'] . ")";
+		foreach ($city_data as $value) {
+			$where_near_by .= " OR (ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND b.city_id = " . $value['id'] . ")";
+		}
+		$t->db->where($where_near_by . ")");
+	}
     // 11. attribute id wise filter  done
     if (isset($filter) && !empty($filter['attribute_value_ids'])) {
         /* https://stackoverflow.com/questions/5015403/mysql-find-in-set-with-multiple-search-string */
@@ -661,6 +662,12 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     } else {
         $t->db->where($where);
     }
+    
+    // Apply time window condition after WHERE array is applied
+    if (isset($__applyTimeWindow) && $__applyTimeWindow === true) {
+        $t->db->where('CURTIME() BETWEEN p.start_time AND p.end_time', NULL, FALSE);
+    }
+    
     if (!isset($filter['flag']) && empty($filter['flag'])) {
         $t->db->group_Start();
         $t->db->or_where('c.status', '1');
@@ -668,13 +675,14 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         $t->db->group_End();
     }
 
-    // discount filter group by
-    if (isset($filter['discount']) && !empty($filter['discount']) && $filter['discount'] != "") {
-        $discount_pr = $filter['discount'];
-        $t->db->group_by($sort_by)->having("cal_discount_percentage  <= " . $discount_pr, null, false)->having("cal_discount_percentage  > 0 ", null, false);
-    } else {
-        $t->db->group_by('p.id');
-    }
+	// discount filter group by
+	if (isset($filter['discount']) && !empty($filter['discount']) && $filter['discount'] != "") {
+		$discount_pr = $filter['discount'];
+		$__groupByTarget = (isset($sort_by) && !empty($sort_by) && preg_match('/^[A-Za-z_][A-Za-z0-9_\\.]*$/', $sort_by)) ? $sort_by : 'p.id';
+		$t->db->group_by($__groupByTarget)->having("cal_discount_percentage  <= " . $discount_pr, null, false)->having("cal_discount_percentage  > 0 ", null, false);
+	} else {
+		$t->db->group_by('p.id');
+	}
 
 
     if ($limit != null || $offset != null) {
@@ -718,6 +726,8 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         ->join('`product_tags` ptg', 'ptg.product_id = p.id ', 'LEFT')
         ->join('`tags` tgs', ' tgs.id = ptg.tag_id ', 'LEFT');
 
+	// Reuse base `ptg`/`tgs` joins for tag filters in count query as well
+
     if (isset($filter) && !empty($filter['search'])) {
         $highlights = explode(" ", $filter['search']);
 
@@ -736,8 +746,7 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         $product_count->or_like('p.name', $filter['search']);
         $t->db->or_like('p.category_id', intval($category_search));
 
-        $t->db->join('`product_tags` pt', 'pt.product_id = p.id', 'LEFT');
-        $t->db->join('`tags` tg', 'tg.id = pt.tag_id', 'LEFT');
+		// No extra joins; use `tgs` alias from the base join
         foreach ($p_tags as $i => $tagsearch) {
             if ($i == 0) {
                 $t->db->like('tg.title', trim($tagsearch));
@@ -797,14 +806,14 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     }
 
 
-    $where_near_by = "";
-    if (isset($filter) && !empty($filter['city_id']) && $filter['city_id'] != "" && $filter['city_id'] != "null" && !empty($filter['latitude']) && $filter['latitude'] != "null" && $filter['longitude'] != "null" && !empty($filter['longitude'])) {
-        $where_near_by = "((ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND u.city = " . $filter['city_id'] . ")";
-        foreach ($city_data as $value) {
-            $where_near_by .= " OR (ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND u.city = " . $value['id'] . ")";
-        }
-        $t->db->where($where_near_by . ")");
-    }
+	$where_near_by = "";
+	if (isset($filter) && !empty($filter['city_id']) && $filter['city_id'] != "" && $filter['city_id'] != "null" && !empty($filter['latitude']) && $filter['latitude'] != "null" && $filter['longitude'] != "null" && !empty($filter['longitude'])) {
+		$where_near_by = "((ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND b.city_id = " . $filter['city_id'] . ")";
+		foreach ($city_data as $value) {
+			$where_near_by .= " OR (ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND b.city_id = " . $value['id'] . ")";
+		}
+		$t->db->where($where_near_by . ")");
+	}
 
     if (isset($filter) && !empty($filter['attribute_value_ids'])) {
         $str = str_replace(',', '|', $filter['attribute_value_ids']); // Ids should be in string and comma separated
