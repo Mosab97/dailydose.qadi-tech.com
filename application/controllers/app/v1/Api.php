@@ -1780,8 +1780,8 @@ class Api extends CI_Controller
         if (isset($_POST['is_wallet_used']) && $_POST['is_wallet_used'] == '1') {
             $this->form_validation->set_rules('wallet_balance_used', ' Wallet Balance ', 'trim|required|numeric|xss_clean');
         }
-        $this->form_validation->set_rules('latitude', 'Latitude', 'trim|required|numeric|xss_clean');
-        $this->form_validation->set_rules('longitude', 'Longitude', 'trim|required|numeric|xss_clean');
+        $this->form_validation->set_rules('latitude', 'Latitude', 'trim|numeric|xss_clean');
+        $this->form_validation->set_rules('longitude', 'Longitude', 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('payment_method', 'Payment Method', 'trim|required|xss_clean');
         $this->form_validation->set_rules('address_id', 'Address id', 'trim|numeric|xss_clean');
 
