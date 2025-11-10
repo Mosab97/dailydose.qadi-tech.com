@@ -3,7 +3,7 @@
         <div class="container-fluid p-3">
             <div class="row">
 
-                <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-warning rounded-circle home_cardss">
                             <i class="ion-ios-cart-outline display-4"></i>
@@ -16,7 +16,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-primary rounded-circle home_cardss">
                             <i class="ion-ios-personadd-outline display-4"></i></span>
@@ -29,7 +29,7 @@
 
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+                <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-success rounded-circle home_cardss">
                             <i class="ion-ios-people-outline display-4"></i></span>
@@ -42,8 +42,8 @@
                         </div>
 
                     </div>
-                </div>
-                <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+                </div> -->
+                <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-danger rounded-circle home_cardss">
                             <i class="fas fa-hamburger"></i>
@@ -56,7 +56,7 @@
                                     class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="col-xl-6 col-12" id="ecommerceChartView">
                     <div class="card card-shadow chart-height">

@@ -80,14 +80,14 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (has_permissions('read', 'categories')) { ?>
+                            <!-- <?php if (has_permissions('read', 'categories')) { ?>
                                 <li class="nav-item">
                                     <a href="<?= base_url('admin/category/bulk-upload') ?>" class="nav-link">
                                         <i class="fas fa-upload nav-icon"></i>
                                         <p>Bulk upload</p>
                                     </a>
                                 </li>
-                            <?php } ?>
+                            <?php } ?> -->
                             <?php if (has_permissions('read', 'category_order')) { ?>
                                 <li class="nav-item">
                                     <a href="<?= base_url('admin/category/category-order') ?>" class="nav-link">
@@ -172,14 +172,14 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                                     </a>
                                 </li>
                             <?php } ?>
-                            <?php if (has_permissions('read', 'product')) { ?>
+                            <!-- <?php if (has_permissions('read', 'product')) { ?>
                                 <li class="nav-item">
                                     <a href="<?= base_url('admin/product/bulk-upload') ?>" class="nav-link">
                                         <i class="fas fa-upload nav-icon"></i>
                                         <p>Bulk upload</p>
                                     </a>
                                 </li>
-                            <?php } ?>
+                            <?php } ?> -->
                             <?php if (has_permissions('read', 'product')) { ?>
                                 <li class="nav-item">
                                     <a href="<?= base_url('admin/product/') ?>" class="nav-link">
