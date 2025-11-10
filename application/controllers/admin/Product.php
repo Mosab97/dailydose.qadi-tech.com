@@ -323,7 +323,7 @@ class Product extends CI_Controller
             }
 
             $this->form_validation->set_rules('pro_input_name', 'Product Name', 'trim|required|xss_clean');
-            $this->form_validation->set_rules('indicator', 'Product Indicator', 'trim|required|xss_clean');
+            // $this->form_validation->set_rules('indicator', 'Product Indicator', 'trim|required|xss_clean');
             $this->form_validation->set_rules('short_description', 'Short Description', 'trim|required|xss_clean');
             $this->form_validation->set_rules('product_category_id', 'Category Id', 'trim|required|xss_clean', array('required' => 'Category is required'));
             $this->form_validation->set_rules('pro_input_tax', 'Tax', 'trim|xss_clean');

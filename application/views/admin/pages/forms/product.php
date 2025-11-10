@@ -104,12 +104,12 @@
                                                     <input type="checkbox" name="is_cancelable" id="is_cancelable" class="switch" <?= (isset($product_details[0]['is_cancelable']) && $product_details[0]['is_cancelable'] == '1') ? 'Checked' : ''; ?> data-bootstrap-switch data-off-color="danger" data-on-color="success">
                                                 </div>
                                             </div>
-                                            <div class="form-group ">
+                                            <!-- <div class="form-group ">
                                                 <label for="is_spicy" class="col-12 col-form-label">Is Spicy ?</label>
                                                 <div class="col-12">
                                                     <input type="checkbox" name="is_spicy" id="is_spicy" class="switch" <?= (isset($product_details[0]['is_spicy']) && $product_details[0]['is_spicy'] == '1') ? 'Checked' : ''; ?> data-bootstrap-switch data-off-color="danger" data-on-color="success">
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <div class="form-group <?= (isset($product_details[0]['is_cancelable']) && $product_details[0]['is_cancelable'] == 1) ? '' : 'collapse' ?>" id='cancelable_till'>
                                                 <label for="cancelable_till" class=" col-12 col-form-label">Till which status ? <span class='text-danger text-sm'>*</span></label>
                                                 <select class='form-control' name="cancelable_till">
@@ -163,7 +163,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label for="indicator" class="col-sm-3 col-form-label">Indicator <span class='text-danger text-sm'>*</span> </label>
                                             <div class="col-sm-12">
                                                 <select class='form-control' name='indicator'>
@@ -172,13 +172,13 @@
                                                     <option value='2' <?= (isset($product_details[0]['indicator']) &&  $product_details[0]['indicator'] == '2') ? 'selected' : ''; ?>>Non-Veg</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
+                                        </div> -->
+                                        <!-- <div class="form-group">
                                             <div class="col-md-12">
                                                 <label for="highlights">Highlights</label>
                                                 <input name='highlights' class='highlights' id='highlights' placeholder="Type in some highlights for example Spicy,Sweet,Must Try etc" value="<?= (isset($product_details[0]['highlights']) && !empty($product_details[0]['highlights'])) ? $product_details[0]['highlights'] : "" ?>" />
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="form-group ">
                                             <label for="calories" class="col-sm-6 col-form-label">Calories <small>(1 kilocalorie (kcal) = 1000 calories (cal))</small></label>
                                             <div class="col-sm-12">
