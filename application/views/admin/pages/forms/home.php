@@ -130,7 +130,7 @@
                             </div>
                         </div>
                     </div>
-                    <?php $branch_name = fetch_details(['id' => $_SESSION['branch_id']], 'branch', 'branch_name') ?>
+                    <!-- <?php $branch_name = fetch_details(['id' => $_SESSION['branch_id']], 'branch', 'branch_name') ?>
                     <div class="col-md-4 col-xs-4 mb-4">
                         <div class="earnings-card">
                             <div class="header">
@@ -151,8 +151,11 @@
                                 <span class="amount text-dark"> <?= isset($top_earning_branch) ? strtoupper(stripslashes($top_earning_branch)) : "-" ?></span>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 <?php } ?>
+                <div class="col-12">
+
+                </div>
                 <!-- end -->
                 <h5 class="col">Order Outlines</h5>
                 <div class="row col-12 d-flex">
@@ -304,7 +307,7 @@
                     <div class="row">
                         <div class="card col-md-12">
                             <div class="card-innr">
-                                <label class="mt-3 ml-3 mb-2">Top Selling Foods</label>
+                                <label class="mt-3 ml-3 mb-2">Top Selling Products</label>
                                 <div class="row mb-2">
                                     <?php
 

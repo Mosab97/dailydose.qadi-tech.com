@@ -515,7 +515,7 @@ class Api extends CI_Controller
                 return;
             }
 
-            if ($auth_settings['authentication_method'] == "firebase") {
+            if ($auth_settings['authentication_method'] == "firebase" && false) {
                 $this->response['error'] = false;
                 $this->response['message'] = 'Ready to sent OTP request from firebase!';
                 $this->response['data'] = array();
@@ -542,7 +542,7 @@ class Api extends CI_Controller
 
                 $this->response['error'] = false;
                 $this->response['message'] = 'Ready to sent OTP request from sms!';
-                $this->response['data'] = array();
+                $this->response['data'] = $data['data'] ?? array();
                 print_r(json_encode($this->response));
                 return;
             }

@@ -209,7 +209,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (has_permissions('read', 'point_of_sale')) { ?>
+                <!-- <?php if (has_permissions('read', 'point_of_sale')) { ?>
                     <li class="nav-item">
                         <a href="<?= base_url('admin/point_of_sale/') ?>" class="nav-link <?= is_url_active('admin/point_of_sale') ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-calculator text-info"></i>
@@ -218,7 +218,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                             </p>
                         </a>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
                 <?php if (has_permissions('read', 'home_slider_images')) { ?>
                     <li class="nav-item">
                         <a href="<?= base_url('admin/slider/manage-slider') ?>" class="nav-link <?= is_url_active('admin/slider') ? 'active' : '' ?>">
@@ -240,7 +240,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (has_permissions('read', 'support_tickets')) { ?>
+                <!-- <?php if (has_permissions('read', 'support_tickets')) { ?>
                     <li class="nav-item has-treeview <?= is_url_active('admin/tickets') ? 'menu-open' : '' ?>">
 
                         <a href="#" class="nav-link <?= is_url_active('admin/tickets') ? 'active' : '' ?>">
@@ -266,7 +266,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                             </li>
                         </ul>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
                 <?php if (has_permissions('read', 'promo_code')) { ?>
                     <li class="nav-item">
                         <a href="<?= base_url('admin/promo-code/manage-promo-code') ?>" class="nav-link <?= is_url_active('admin/promo-code') ? 'active' : '' ?>">
@@ -340,7 +340,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                         </ul>
                     </li>
                 <?php } ?>
-                <?php if (has_permissions('read', 'rider')) { ?>
+                <!-- <?php if (has_permissions('read', 'rider')) { ?>
                     <li class="nav-item has-treeview <?= is_url_active('admin/riders', 'admin/fund-transfer') ? 'menu-open' : '' ?>">
                         <a href="#" class="nav-link <?= is_url_active('admin/riders', 'admin/fund-transfer') ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-motorcycle text-info"></i>
@@ -384,16 +384,16 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                             <?php } ?>
                         </ul>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
 
-                <?php if (has_permissions('read', 'payment_request')) { ?>
+                <!-- <?php if (has_permissions('read', 'payment_request')) { ?>
                     <li class="nav-item has-treeview">
                         <a href="<?= base_url('admin/payment-request') ?>" class="nav-link <?= is_url_active('admin/payment-request') ? 'active' : '' ?>">
                             <i class="nav-icon fas fa-money-bill-wave text-danger"></i>
                             <p>Payment Request</p>
                         </a>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
                 <?php if (has_permissions('read', 'send_notification')) { ?>
                     <li class="nav-item has-treeview">
                         <a href="<?= base_url('admin/Notification-settings/manage-notifications') ?>" class="nav-link <?= is_url_active('admin/Notification-settings') ? 'active' : '' ?>">
@@ -432,12 +432,12 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                                     <p>General Settings</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="<?= base_url('admin/language') ?>" class="nav-link">
                                     <i class="fa fa-language nav-icon "></i>
                                     <p>Languages</p>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="nav-item">
                                 <a href="<?= base_url('admin/web-setting/firebase') ?>" class="nav-link">
                                     <i class="fa fa-fire nav-icon "></i>
@@ -447,7 +447,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                         </ul>
                     </li>
                 <?php } ?>
-                <?php if (has_permissions('read', 'city')) { ?>
+                <!-- <?php if (has_permissions('read', 'city')) { ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-map-marked-alt text-danger"></i>
@@ -475,7 +475,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                             <?php } ?>
                         </ul>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
                 <?php if (has_permissions('read', 'sales_inventory_report')) { ?>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
