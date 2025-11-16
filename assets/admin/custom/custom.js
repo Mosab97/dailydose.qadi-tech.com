@@ -7755,28 +7755,28 @@ function sales_inventory_report_query_params(p) {
 }
 
 // google translate
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement(
-    {
-      pageLanguage: "en"
-    },
-    "google_translate_element"
-  );
+// function googleTranslateElementInit() {
+//   new google.translate.TranslateElement(
+//     {
+//       pageLanguage: "en"
+//     },
+//     "google_translate_element"
+//   );
 
-  var $googleDiv = $("#google_translate_element .skiptranslate");
-  var $googleDivChild = $("#google_translate_element .skiptranslate div");
-  $googleDivChild.next().remove();
+//   var $googleDiv = $("#google_translate_element .skiptranslate");
+//   var $googleDivChild = $("#google_translate_element .skiptranslate div");
+//   $googleDivChild.next().remove();
 
-  $googleDiv
-    .contents()
-    .filter(function () {
-      return this.nodeType === 3 && $.trim(this.nodeValue) !== "";
-    })
-    .remove();
-}
-$(document).ready(function () {
-  googleTranslateElementInit();
-});
+//   $googleDiv
+//     .contents()
+//     .filter(function () {
+//       return this.nodeType === 3 && $.trim(this.nodeValue) !== "";
+//     })
+//     .remove();
+// }
+// $(document).ready(function () {
+//   googleTranslateElementInit();
+// });
 
 
 var divs = document.getElementsByClassName("table_cart");

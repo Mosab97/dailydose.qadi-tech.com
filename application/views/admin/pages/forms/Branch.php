@@ -2,7 +2,7 @@
 $javascript_map_key = $system_settings['google_map_javascript_api_key'];
 $map_url = "https://maps.googleapis.com/maps/api/js?key=$javascript_map_key&libraries=drawing,places&v=weekly"
 ?>
-<script async defer src="<?= $map_url ?>" />
+<script async defer src="<?= $map_url ?>" >
 </script>
 <script>
     $(document).ready(function() {
