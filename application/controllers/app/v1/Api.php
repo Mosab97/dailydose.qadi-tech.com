@@ -515,7 +515,7 @@ class Api extends CI_Controller
                 return;
             }
 
-            if ($auth_settings['authentication_method'] == "firebase") {
+            if ($auth_settings['authentication_method'] == "firebase" && false) {
                 $this->response['error'] = false;
                 $this->response['message'] = 'Ready to sent OTP request from firebase!';
                 $this->response['data'] = array();
@@ -542,7 +542,7 @@ class Api extends CI_Controller
 
                 $this->response['error'] = false;
                 $this->response['message'] = 'Ready to sent OTP request from sms!';
-                $this->response['data'] = array();
+                $this->response['data'] = $data['data'] ?? array();
                 print_r(json_encode($this->response));
                 return;
             }
@@ -1780,8 +1780,8 @@ class Api extends CI_Controller
         if (isset($_POST['is_wallet_used']) && $_POST['is_wallet_used'] == '1') {
             $this->form_validation->set_rules('wallet_balance_used', ' Wallet Balance ', 'trim|required|numeric|xss_clean');
         }
-        $this->form_validation->set_rules('latitude', 'Latitude', 'trim|required|numeric|xss_clean');
-        $this->form_validation->set_rules('longitude', 'Longitude', 'trim|required|numeric|xss_clean');
+        $this->form_validation->set_rules('latitude', 'Latitude', 'trim|numeric|xss_clean');
+        $this->form_validation->set_rules('longitude', 'Longitude', 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('payment_method', 'Payment Method', 'trim|required|xss_clean');
         $this->form_validation->set_rules('address_id', 'Address id', 'trim|numeric|xss_clean');
 

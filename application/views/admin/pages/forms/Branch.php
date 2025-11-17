@@ -1,14 +1,14 @@
 <?php $system_settings = get_settings("system_settings", true);
-$javascript_map_key = $system_settings['google_map_javascript_api_key'];
-$map_url = "https://maps.googleapis.com/maps/api/js?key=$javascript_map_key&libraries=drawing,places&v=weekly"
+// $javascript_map_key = $system_settings['google_map_javascript_api_key'];
+// $map_url = "https://maps.googleapis.com/maps/api/js?key=$javascript_map_key&libraries=drawing,places&v=weekly"
 ?>
 <script async defer src="<?= $map_url ?>" >
 </script>
-<script>
+<!-- <script>
     $(document).ready(function() {
         initMap();
     });
-</script>
+</script> -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <!-- Main content -->
@@ -41,7 +41,7 @@ $map_url = "https://maps.googleapis.com/maps/api/js?key=$javascript_map_key&libr
                                 <?php if (isset($fetched_details[0]['id']) && !empty($fetched_details[0]['id'])) { ?>
                                     <input type="hidden" name="edit_branch" value="<?= $fetched_details[0]['id'] ?>">
                                 <?php } ?>
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col-md-4 map-div">
                                         <label for="city_name">Search Location</label>
                                         <input id="city-input" type="text" class="form-control"
@@ -56,7 +56,7 @@ $map_url = "https://maps.googleapis.com/maps/api/js?key=$javascript_map_key&libr
                                             <span id="place-address"></span>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- hidden fields for long lat -->
 
                                 <!-- end -->
@@ -251,11 +251,11 @@ $map_url = "https://maps.googleapis.com/maps/api/js?key=$javascript_map_key&libr
 
                                 </div>
                                 <hr>
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <button type="reset" class="btn btn-warning">Reset</button>
                                     <button type="submit" class="btn btn-info submit_branch"
                                         id="submit_btn"><?= (isset($fetched_details[0]['id'])) ? 'Update Branch' : 'Add Branch' ?></button>
-                                </div>
+                                </div> -->
                             </div>
 
                     </div>

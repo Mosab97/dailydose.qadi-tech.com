@@ -36,11 +36,11 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="card content-area p-4">
-                        <div class="card-header border-0">
+                        <!-- <div class="card-header border-0">
                             <div class="card-tools">
                                 <a href="<?= base_url() . 'admin/branch/' ?>" class="btn btn-block btn-outline-info btn-sm">Add Branch</a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="card-innr">
                             <div class="card-head">
                                 <h4 class="card-title">Branch</h4>
@@ -51,7 +51,7 @@
                                 <thead>
                                     <tr>
                                         <th data-field="id" data-sortable="true">ID</th>
-                                        <th data-field="branch_name" data-sortable="true">Branch Name</th>
+                                        <!-- <th data-field="branch_name" data-sortable="true">Branch Name</th> -->
                                         <th data-field="image" data-sortable="true">Image</th>
                                         <th data-field="description" data-sortable="false" data-visible="false">Description</th>
                                         <th data-field="address" data-sortable="false">Address</th>

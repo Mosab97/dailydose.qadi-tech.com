@@ -276,6 +276,26 @@ SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 **Note:** It's better to fix queries properly rather than disable this mode, as it enforces correct SQL standards.
 
+### Docker Development Override (Nov 7, 2025)
+
+To unblock local testing we added a Docker override that removes `ONLY_FULL_GROUP_BY` from MySQL’s `sql_mode` inside the dev container:
+
+1. Created `docker/mysql/conf.d/custom.cnf`:
+   ```
+   [mysqld]
+   sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+   ```
+2. Mounted the file in `docker-compose.yml`:
+   ```yaml
+   services:
+     db:
+       volumes:
+         - ./docker/mysql/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:ro
+   ```
+3. Recreated the `db` service with `docker compose up -d db`.
+
+This affects only the Dockerized development database. Production should keep `ONLY_FULL_GROUP_BY` enabled so query regressions surface early.
+
 ---
 
 ## Date

@@ -71,14 +71,10 @@ class Attributes extends CI_Controller
                 }
             }
 
-            $this->form_validation->set_rules('name', 'Name', 'trim|required|xss_clean');
-            if (!isset($_POST['edit_attribute_id'])) {
-
-                $this->form_validation->set_rules('attribute_values', 'Attribute Values', 'trim|required|xss_clean');
-                $this->form_validation->set_rules('value_name[]', 'Attribute Values', 'trim|required|xss_clean');
-                $this->form_validation->set_rules('value_id[]', 'Attribute Values Id', 'trim|required|xss_clean');
-                
-            }
+        $this->form_validation->set_rules('name', 'Name', 'trim|required|xss_clean');
+        if (!isset($_POST['edit_attribute_id'])) {
+            $this->form_validation->set_rules('attribute_values', 'Attribute Values', 'trim|required|xss_clean');
+        }
 
             if (!$this->form_validation->run()) {
                 $this->response['error'] = true;
@@ -87,8 +83,6 @@ class Attributes extends CI_Controller
                 $this->response['messages'] = array(
                     'name' => form_error('name'),
                     'attribute_values' => form_error('attribute_values'),
-                    'value_name[]' => form_error('attribute_values'),
-                    'value_id[]' => form_error('attribute_values_id'),
                 );
                 print_r(json_encode($this->response));
             } else {

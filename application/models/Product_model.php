@@ -22,7 +22,7 @@ class Product_model extends CI_Model
         $short_description = $data['short_description'];
         $category_id = $data['product_category_id'];
         $branch_id = $data['branch_id'];
-        $indicator = $data['indicator'];
+        $indicator = isset($data['indicator']) && $data['indicator'] !== '' ? $data['indicator'] : '0';
         $highlights = (!empty($data['highlights'])) ? $data['highlights'] : "";
         $slug = create_unique_slug($data['pro_input_name'], 'products');
         $main_image_name = $data['pro_input_image'];

@@ -199,19 +199,19 @@ class Branch_model extends CI_Model
             if ($this->ion_auth->is_admin()) {
                 $operate = "<a href=" . base_url('admin/branch?edit_branch=' . $row['id'] . '') . " data-id=" . $row['id'] . " class='btn btn-success btn-xs mr-1 mb-1' title='Edit' ><i class='fa fa-pen'></i></a>";
             }
-            if ($row['status'] == '1') {
-                $tempRow['status'] = '<a class="badge badge-success text-white" >Active</a>';
-                $operate .= '<a class="btn btn-warning btn-xs update_active_status mr-1 mb-1" data-table="branch" title="Deactivate" href="javascript:void(0)" data-id="' . $row['id'] . '" data-status="' . $row['status'] . '" ><i class="fa fa-toggle-on"></i></a>';
-            } else if ($row['status'] == '0') {
-                $tempRow['status'] = '<a class="badge badge-danger text-white" >Deactive</a>';
-                $operate .= '<a class="btn btn-secondary mr-1 mb-1 btn-xs update_active_status" data-table="branch" href="javascript:void(0)" title="Active" data-id="' . $row['id'] . '" data-status="' . $row['status'] . '" ><i class="fa fa-toggle-off"></i></a>';
-            }
-            $operate .= ' <a href="javaScript:void(0)" id="delete-restro-branch" class="btn btn-danger btn-xs mr-1 mb-1" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></a>';
-            if ($row['default_branch'] == '1') {
-                $operate .= '<a class="btn btn-success btn-xs update_default_branch mr-1 mb-1" data-table="branch" title="Custom" href="javascript:void(0)" data-id="' . $row['id'] . '" data-defaultstatus="' . $row['default_branch'] . '" ><i class="fa fa-toggle-on"></i></a>';
-            } else if ($row['default_branch'] == '0') {
-                $operate .= '<a class="btn btn-info mr-1 mb-1 btn-xs update_default_branch" data-table="branch" href="javascript:void(0)" title="Default" data-id="' . $row['id'] . '" data-defaultstatus="' . $row['default_branch'] . '" ><i class="fa fa-toggle-off"></i></a>';
-            }
+            // if ($row['status'] == '1') {
+            //     $tempRow['status'] = '<a class="badge badge-success text-white" >Active</a>';
+            //     $operate .= '<a class="btn btn-warning btn-xs update_active_status mr-1 mb-1" data-table="branch" title="Deactivate" href="javascript:void(0)" data-id="' . $row['id'] . '" data-status="' . $row['status'] . '" ><i class="fa fa-toggle-on"></i></a>';
+            // } else if ($row['status'] == '0') {
+            //     $tempRow['status'] = '<a class="badge badge-danger text-white" >Deactive</a>';
+            //     $operate .= '<a class="btn btn-secondary mr-1 mb-1 btn-xs update_active_status" data-table="branch" href="javascript:void(0)" title="Active" data-id="' . $row['id'] . '" data-status="' . $row['status'] . '" ><i class="fa fa-toggle-off"></i></a>';
+            // }
+            // $operate .= ' <a href="javaScript:void(0)" id="delete-restro-branch" class="btn btn-danger btn-xs mr-1 mb-1" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></a>';
+            // if ($row['default_branch'] == '1') {
+            //     $operate .= '<a class="btn btn-success btn-xs update_default_branch mr-1 mb-1" data-table="branch" title="Custom" href="javascript:void(0)" data-id="' . $row['id'] . '" data-defaultstatus="' . $row['default_branch'] . '" ><i class="fa fa-toggle-on"></i></a>';
+            // } else if ($row['default_branch'] == '0') {
+            //     $operate .= '<a class="btn btn-info mr-1 mb-1 btn-xs update_default_branch" data-table="branch" href="javascript:void(0)" title="Default" data-id="' . $row['id'] . '" data-defaultstatus="' . $row['default_branch'] . '" ><i class="fa fa-toggle-off"></i></a>';
+            // }
             $tempRow['id'] = $row['id'];
             $tempRow['branch_name'] = $row['branch_name'];
             $row['image'] = isset($row['image']) && !empty($row['image']) ? base_url() . $row['image'] : base_url() . NO_IMAGE;

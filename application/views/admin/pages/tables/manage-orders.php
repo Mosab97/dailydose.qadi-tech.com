@@ -87,7 +87,7 @@
                                         </div>
                                     </div>
                                     <!-- end -->
-                                    <div class="col-sm-3">
+                                    <!-- <div class="col-sm-3">
                                         <div class="small-box">
                                             <div class="inner">
                                                 <h3><?= $status_counts['out_for_delivery'] ?></h3>
@@ -97,7 +97,7 @@
                                                 <i class="fa fa-xs fa-shipping-fast home_page_order_icones"></i>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-sm-3">
                                         <div class="small-box">
                                             <div class="inner">
@@ -155,14 +155,14 @@
                                                 <option value="pending">Pending</option>
                                                 <option value="confirmed">Confirmed</option>
                                                 <option value="preparing">Preparing</option>
-                                                <option value="out_for_delivery">Out For Delivery</option>
+                                                <!-- <option value="out_for_delivery">Out For Delivery</option> -->
                                                 <option value="delivered">Delivered</option>
                                                 <option value="cancelled">Cancelled</option>
                                             </select>
                                         </div>
                                     </div>
                                     <!-- Filter By payment  -->
-                                    <div class="form-group col-md-3">
+                                    <!-- <div class="form-group col-md-3">
                                         <div>
                                             <label>Filter By Payment Method</label>
                                             <select id="payment_method" name="payment_method" placeholder="Select Payment Method" required="" class="form-control">
@@ -178,7 +178,7 @@
                                                 <option value="phonepe">Phonepe</option>
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group col-md-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-outline-info btn-sm" onclick="status_date_wise_search()">Filter</button>
                                     </div>
