@@ -17,6 +17,7 @@
 <script src="<?= base_url('assets/admin/custom/translate.js') ?>"></script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+
 <script src=<?= base_url('assets/admin/ekko-lightbox/ekko-lightbox.min.js') ?>></script>
 <!-- ChartJS -->
 <script src="<?= base_url('assets/admin/chart.js/Chart.min.js') ?>"></script>
