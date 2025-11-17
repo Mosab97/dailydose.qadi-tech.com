@@ -162,7 +162,7 @@
                                         </div>
                                     </div>
                                     <!-- Filter By payment  -->
-                                    <div class="form-group col-md-3">
+                                    <!-- <div class="form-group col-md-3">
                                         <div>
                                             <label>Filter By Payment Method</label>
                                             <select id="payment_method" name="payment_method" placeholder="Select Payment Method" required="" class="form-control">
@@ -178,7 +178,7 @@
                                                 <option value="phonepe">Phonepe</option>
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group col-md-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-outline-info btn-sm" onclick="status_date_wise_search()">Filter</button>
                                     </div>

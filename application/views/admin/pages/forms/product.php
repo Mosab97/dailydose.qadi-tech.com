@@ -62,7 +62,7 @@
                                                 <textarea type="text" class="form-control" id="short_description" placeholder="Product Short Description" name="short_description"><?= isset($product_details[0]['short_description']) ? output_escaping(str_replace('\r\n', '&#13;&#10;', $product_details[0]['short_description'])) : ""; ?></textarea>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label for="pro_input_tax" class="col-sm-3 col-form-label">Tax </label>
                                             <div class="col-sm-12">
                                                 <?php if (isset($permissions_message)) { ?>
@@ -89,7 +89,7 @@
                                             <div class="col-sm-12">
                                                 <label class="text text-danger">This tax will be exclusively calculate and display at checkout page. </label>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="col-md-12 row">
 
                                             <div class="form-group ">
