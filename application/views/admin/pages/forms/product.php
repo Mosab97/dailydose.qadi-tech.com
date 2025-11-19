@@ -32,10 +32,33 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="form-group ">
+                                        <!-- Language Tabs for Product Name -->
+                                        <div class="form-group">
                                             <label for="name" class="col-sm-3 col-form-label">Name <span class='text-danger text-sm'>*</span></label>
                                             <div class="col-sm-12">
-                                                <input type="text" class="form-control" id="pro_input_text" placeholder="Product Name" name="pro_input_name" value="<?= @$product_details[0]['name'] ?>">
+                                                <ul class="nav nav-tabs" id="nameTabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="name-en-tab" data-toggle="tab" href="#name-en" role="tab">English</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="name-ar-tab" data-toggle="tab" href="#name-ar" role="tab">Arabic</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="name-he-tab" data-toggle="tab" href="#name-he" role="tab">Hebrew</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-2" id="nameTabContent">
+                                                    <div class="tab-pane fade show active" id="name-en" role="tabpanel">
+                                                        <input type="text" class="form-control" id="pro_input_text" placeholder="Product Name (English)" name="pro_input_name" value="<?= @$product_details[0]['name'] ?>">
+                                                        <input type="hidden" name="translations[en][name]" value="<?= isset($product_translations['en']['name']) ? $product_translations['en']['name'] : @$product_details[0]['name'] ?>">
+                                                    </div>
+                                                    <div class="tab-pane fade" id="name-ar" role="tabpanel">
+                                                        <input type="text" class="form-control" dir="rtl" placeholder="اسم المنتج (Arabic)" name="translations[ar][name]" value="<?= isset($product_translations['ar']['name']) ? $product_translations['ar']['name'] : '' ?>">
+                                                    </div>
+                                                    <div class="tab-pane fade" id="name-he" role="tabpanel">
+                                                        <input type="text" class="form-control" dir="rtl" placeholder="שם המוצר (Hebrew)" name="translations[he][name]" value="<?= isset($product_translations['he']['name']) ? $product_translations['he']['name'] : '' ?>">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- select multiple branch -->
@@ -56,10 +79,33 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group ">
+                                        <!-- Language Tabs for Short Description -->
+                                        <div class="form-group">
                                             <label for="pro_short_description" class="col-sm-4 col-form-label">Short Description <span class='text-danger text-sm'>*</span></label>
                                             <div class="col-sm-12">
-                                                <textarea type="text" class="form-control" id="short_description" placeholder="Product Short Description" name="short_description"><?= isset($product_details[0]['short_description']) ? output_escaping(str_replace('\r\n', '&#13;&#10;', $product_details[0]['short_description'])) : ""; ?></textarea>
+                                                <ul class="nav nav-tabs" id="descTabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="desc-en-tab" data-toggle="tab" href="#desc-en" role="tab">English</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="desc-ar-tab" data-toggle="tab" href="#desc-ar" role="tab">Arabic</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="desc-he-tab" data-toggle="tab" href="#desc-he" role="tab">Hebrew</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-2" id="descTabContent">
+                                                    <div class="tab-pane fade show active" id="desc-en" role="tabpanel">
+                                                        <textarea type="text" class="form-control" id="short_description" placeholder="Product Short Description (English)" name="short_description"><?= isset($product_details[0]['short_description']) ? output_escaping(str_replace('\r\n', '&#13;&#10;', $product_details[0]['short_description'])) : ""; ?></textarea>
+                                                        <input type="hidden" name="translations[en][short_description]" value="<?= isset($product_translations['en']['short_description']) ? $product_translations['en']['short_description'] : (isset($product_details[0]['short_description']) ? $product_details[0]['short_description'] : '') ?>">
+                                                    </div>
+                                                    <div class="tab-pane fade" id="desc-ar" role="tabpanel">
+                                                        <textarea type="text" class="form-control" dir="rtl" placeholder="وصف المنتج (Arabic)" name="translations[ar][short_description]"><?= isset($product_translations['ar']['short_description']) ? $product_translations['ar']['short_description'] : '' ?></textarea>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="desc-he" role="tabpanel">
+                                                        <textarea type="text" class="form-control" dir="rtl" placeholder="תיאור המוצר (Hebrew)" name="translations[he][short_description]"><?= isset($product_translations['he']['short_description']) ? $product_translations['he']['short_description'] : '' ?></textarea>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- <div class="form-group">
@@ -645,3 +691,23 @@
     </section>
     <!-- /.content -->
 </div>
+
+<script>
+$(document).ready(function() {
+    // Sync English name field with main product name field
+    $('input[name="pro_input_name"]').on('input', function() {
+        $('input[name="translations[en][name]"]').val($(this).val());
+    });
+    
+    // Sync English description field with main product description field
+    $('textarea[name="short_description"]').on('input', function() {
+        $('input[name="translations[en][short_description]"]').val($(this).val());
+    });
+    
+    // On form submit, ensure English translations are synced
+    $('#save-product').on('submit', function() {
+        $('input[name="translations[en][name]"]').val($('input[name="pro_input_name"]').val());
+        $('input[name="translations[en][short_description]"]').val($('textarea[name="short_description"]').val());
+    });
+});
+</script>

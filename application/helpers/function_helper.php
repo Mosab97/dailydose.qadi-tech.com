@@ -6,7 +6,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
     2. get_settings($type = 'store_settings', $is_json = false)
     3. get_logo()
     4. fetch_details($where = NULL,$table,$fields = '*')
-    5. fetch_product($user_id = NULL, $filter = NULL, $id = NULL, $category_id = NULL, $limit = NULL, $offset = NULL, $sort = NULL, $order = NULL, $return_count = NULL)
+    5. fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id = NULL, $category_id = NULL, $limit = NULL, $offset = NULL, $sort = NULL, $order = NULL, $return_count = NULL, $is_deliverable = NULL, $partner_id = NULL, $filter_by = NULL, $cart_id = NULL, $product_variant_id = NULL)
     6. update_details($set,$where,$table)
     7. delete_image($id,$path,$field,$img_name,$table_name,$isjson = TRUE)
     8. delete_details($where,$table)
@@ -388,7 +388,7 @@ function fetch_details($where = NULL, $table = "", $fields = '*', $limit = '', $
     return $res;
 }
 
-function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id = NULL, $category_id = NULL, $limit = NULL, $offset = NULL, $sort = NULL, $order = NULL, $return_count = NULL, $is_deliverable = NULL, $sort_by = NULL, $cart_id = NULL, $product_variant_id = NULL)
+function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id = NULL, $category_id = NULL, $limit = NULL, $offset = NULL, $sort = NULL, $order = NULL, $return_count = NULL, $is_deliverable = NULL, $partner_id = NULL, $filter_by = NULL, $cart_id = NULL, $product_variant_id = NULL)
 {
     $settings = get_settings('system_settings', true);
     $near_by_distance = 5;
@@ -412,13 +412,14 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     if (isset($filter['show_only_active_products']) && $filter['show_only_active_products'] == 0) {
         $where = [];
     } else {
-        $where = ['p.status' => 1, 'pv.status' => 1, 'sd.status' => 1, 'p.branch_id' => $branch_id];
+        $where = ['p.status' => 1, 'pv.status' => 1, 'p.branch_id' => $branch_id];
     }
 
-    if (isset($filter['currently_available']) && $filter['currently_available'] == 0) {
-        $where = [];
-    } else {
-        $where = ['CURTIME() BETWEEN start_time AND end_time', 'p.status' => 1, 'p.branch_id' => $branch_id];
+    // Handle currently_available filter separately
+    // Only check availability time if explicitly requested (currently_available = 1)
+    $check_availability = false;
+    if (isset($filter['currently_available']) && $filter['currently_available'] == 1) {
+        $check_availability = true;
     }
 
     // 3. discount filter done
@@ -437,13 +438,18 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         $category_search = $categoryId;
     }
 
-    $t->db->select($discount_filter_data . ' (select count(id)  from products where products.category_id=c.id ) as total,count(p.id) as sales, p.stock_type,p.calories,p.status ,p.is_prices_inclusive_tax,p.tax as tax_id, p.type ,GROUP_CONCAT(DISTINCT(pa.attribute_value_ids)) as attr_value_ids, p.branch_id,p.id,p.stock,p.name,p.category_id,p.short_description,p.slug,p.total_allowed_quantity,p.minimum_order_quantity,p.cod_allowed,p.is_spicy,p.row_order,p.rating,p.no_of_ratings,p.image,p.is_cancelable,p.cancelable_till,p.indicator, p.highlights,p.availability,c.name as category_name,c.slug as category_slug,p.available_time,p.start_time,p.end_time,tax.percentage as tax_percentage,GROUP_CONCAT(DISTINCT tgs.title ORDER BY tgs.title ASC SEPARATOR \', \') AS tags')
+    // Get language code from filter, default to 'en'
+    $language_code = (isset($filter['language']) && !empty($filter['language'])) ? $filter['language'] : 'en';
+    
+    $t->db->select($discount_filter_data . ' (select count(id)  from products where products.category_id=c.id ) as total,count(p.id) as sales, p.stock_type,p.calories,p.status ,p.is_prices_inclusive_tax,p.tax as tax_id, p.type ,GROUP_CONCAT(DISTINCT(pa.attribute_value_ids)) as attr_value_ids, p.branch_id,p.id,p.stock,COALESCE(pt.name, p.name) as name,p.category_id,COALESCE(pt.short_description, p.short_description) as short_description,p.slug,p.total_allowed_quantity,p.minimum_order_quantity,p.cod_allowed,p.is_spicy,p.row_order,p.rating,p.no_of_ratings,p.image,p.is_cancelable,p.cancelable_till,p.indicator, p.highlights,p.availability,c.name as category_name,c.slug as category_slug,p.available_time,p.start_time,p.end_time,tax.percentage as tax_percentage,GROUP_CONCAT(DISTINCT tgs.title ORDER BY tgs.title ASC SEPARATOR \', \') AS tags')
         ->join(" categories c", "p.category_id=c.id ", 'LEFT')
         ->join(" branch b", "p.branch_id=b.id ", 'LEFT')
         ->join('`product_variants` pv', 'p.id = pv.product_id', 'LEFT')
         ->join('`taxes` tax', 'tax.id = p.tax', 'LEFT')
         ->join('`cities` ct', 'ct.id = b.city_id', 'LEFT')
         ->join('`product_attributes` pa', ' pa.product_id = p.id ', 'LEFT')
+        // product translations
+        ->join('`product_translations` pt', "pt.product_id = p.id AND pt.language_code = '$language_code'", 'LEFT')
         // product_tags
         ->join('`product_tags` ptg', 'ptg.product_id = p.id ', 'LEFT')
         ->join('`tags` tgs', ' tgs.id = ptg.tag_id ', 'LEFT');
@@ -469,13 +475,13 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         }
         $t->db->or_like('p.name', trim($filter['search']));
         $t->db->or_like('p.category_id', intval($category_search));
-        $t->db->join('`product_tags` pt', 'pt.product_id = p.id', 'LEFT');
-        $t->db->join('`tags` tg', 'tg.id = pt.tag_id', 'LEFT');
+        $t->db->join('`product_tags` pt_search', 'pt_search.product_id = p.id', 'LEFT');
+        $t->db->join('`tags` tg_search', 'tg_search.id = pt_search.tag_id', 'LEFT');
         foreach ($p_tags as $i => $tagsearch) {
             if ($i == 0) {
-                $t->db->like('tg.title', trim($tagsearch));
+                $t->db->like('tg_search.title', trim($tagsearch));
             } else {
-                $t->db->or_like('tg.title', trim($tagsearch));
+                $t->db->or_like('tg_search.title', trim($tagsearch));
             }
         }
         $t->db->group_end();
@@ -484,14 +490,14 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     // search by tags done
     if (isset($filter) && !empty($filter['tags'])) {
         $p_tags = explode(",", $filter['tags']);
-        $t->db->join('`product_tags` pt', 'pt.product_id = p.id', 'LEFT');
-        $t->db->join('`tags` tg', 'tg.id = pt.tag_id', 'LEFT');
+        $t->db->join('`product_tags` pt_tags', 'pt_tags.product_id = p.id', 'LEFT');
+        $t->db->join('`tags` tg_tags', 'tg_tags.id = pt_tags.tag_id', 'LEFT');
         $t->db->group_Start();
         foreach ($p_tags as $i => $tag) {
             if ($i == 0) {
-                $t->db->like('tg.title', trim($tag));
+                $t->db->like('tg_tags.title', trim($tag));
             } else {
-                $t->db->or_like('tg.title', trim($tag));
+                $t->db->or_like('tg_tags.title', trim($tag));
             }
         }
         $t->db->group_end();
@@ -504,6 +510,10 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     } else {
         unset($where["p.branch_id"]);
     }
+
+    // Note: partner_id parameter exists for API compatibility but products don't have partner_id column
+    // Products are linked to branches, and branches are linked to partners/users
+    // If you need to filter by partner, you would need to join through branch table
 
     // 6 limit stock and out of stock filter
     if (isset($filter) && !empty($filter['flag']) && $filter['flag'] != "null" && $filter['flag'] != "") {
@@ -564,9 +574,9 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
 
     $where_near_by = "";
     if (isset($filter) && !empty($filter['city_id']) && $filter['city_id'] != "" && $filter['city_id'] != "null" && !empty($filter['latitude']) && $filter['latitude'] != "null" && $filter['longitude'] != "null" && !empty($filter['longitude'])) {
-        $where_near_by = "((ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND u.city = " . $filter['city_id'] . ")";
+        $where_near_by = "((ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND b.city_id = " . $filter['city_id'] . ")";
         foreach ($city_data as $value) {
-            $where_near_by .= " OR (ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND u.city = " . $value['id'] . ")";
+            $where_near_by .= " OR (ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND b.city_id = " . $value['id'] . ")";
         }
         $t->db->where($where_near_by . ")");
     }
@@ -661,6 +671,15 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     } else {
         $t->db->where($where);
     }
+    
+    // Apply availability time check if enabled
+    // This checks if current time is within product's available hours
+    if ($check_availability) {
+        $t->db->group_Start();
+        $t->db->where('(p.available_time = 0 OR (p.available_time = 1 AND CURTIME() BETWEEN p.start_time AND p.end_time))', NULL, FALSE);
+        $t->db->group_End();
+    }
+    
     if (!isset($filter['flag']) && empty($filter['flag'])) {
         $t->db->group_Start();
         $t->db->or_where('c.status', '1');
@@ -671,7 +690,8 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     // discount filter group by
     if (isset($filter['discount']) && !empty($filter['discount']) && $filter['discount'] != "") {
         $discount_pr = $filter['discount'];
-        $t->db->group_by($sort_by)->having("cal_discount_percentage  <= " . $discount_pr, null, false)->having("cal_discount_percentage  > 0 ", null, false);
+        $group_by_column = (!empty($filter_by)) ? $filter_by : 'p.id';
+        $t->db->group_by($group_by_column)->having("cal_discount_percentage  <= " . $discount_pr, null, false)->having("cal_discount_percentage  > 0 ", null, false);
     } else {
         $t->db->group_by('p.id');
     }
@@ -736,13 +756,13 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
         $product_count->or_like('p.name', $filter['search']);
         $t->db->or_like('p.category_id', intval($category_search));
 
-        $t->db->join('`product_tags` pt', 'pt.product_id = p.id', 'LEFT');
-        $t->db->join('`tags` tg', 'tg.id = pt.tag_id', 'LEFT');
+        $t->db->join('`product_tags` pt_count', 'pt_count.product_id = p.id', 'LEFT');
+        $t->db->join('`tags` tg_count', 'tg_count.id = pt_count.tag_id', 'LEFT');
         foreach ($p_tags as $i => $tagsearch) {
             if ($i == 0) {
-                $t->db->like('tg.title', trim($tagsearch));
+                $t->db->like('tg_count.title', trim($tagsearch));
             } else {
-                $t->db->or_like('tg.title', trim($tagsearch));
+                $t->db->or_like('tg_count.title', trim($tagsearch));
             }
         }
         $t->db->group_End();
@@ -799,9 +819,9 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
 
     $where_near_by = "";
     if (isset($filter) && !empty($filter['city_id']) && $filter['city_id'] != "" && $filter['city_id'] != "null" && !empty($filter['latitude']) && $filter['latitude'] != "null" && $filter['longitude'] != "null" && !empty($filter['longitude'])) {
-        $where_near_by = "((ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND u.city = " . $filter['city_id'] . ")";
+        $where_near_by = "((ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $final_distance . " AND b.city_id = " . $filter['city_id'] . ")";
         foreach ($city_data as $value) {
-            $where_near_by .= " OR (ST_Distance_Sphere(POINT(u.latitude,u.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND u.city = " . $value['id'] . ")";
+            $where_near_by .= " OR (ST_Distance_Sphere(POINT(b.latitude,b.longitude), ST_GeomFromText('POINT(" . $filter['latitude'] . " " . $filter['longitude'] . ")') )/ 1000 <= " . $value['max_deliverable_distance'] . " AND b.city_id = " . $value['id'] . ")";
         }
         $t->db->where($where_near_by . ")");
     }
@@ -872,7 +892,25 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
             $product[$i]['review_images'] = (!empty($rating)) ? [$rating] : array();
             $product[$i]['tax_percentage'] = (isset($product[$i]['tax_percentage']) && intval($product[$i]['tax_percentage']) > 0) ? $product[$i]['tax_percentage'] : '0';
             $product[$i]['attributes'] = get_attribute_values_by_pid($product[$i]['id']);
-            $product[$i]['product_add_ons'] = fetch_details(['product_id' => $product[$i]['id'], 'status' => 1], 'product_add_ons', 'id,product_id,title,description,price,calories');
+            // Get product add-ons with translations
+            $add_ons = fetch_details(['product_id' => $product[$i]['id'], 'status' => 1], 'product_add_ons', 'id,product_id,title,description,price,calories');
+            
+            // Apply translations to add-ons if language is specified
+            if (isset($filter['language']) && !empty($filter['language']) && $filter['language'] != 'en') {
+                $language_code = $filter['language'];
+                foreach ($add_ons as $key => $addon) {
+                    $translation = $t->db->where('add_on_id', $addon['id'])
+                                        ->where('language_code', $language_code)
+                                        ->get('product_add_on_translations')
+                                        ->row_array();
+                    if ($translation) {
+                        $add_ons[$key]['title'] = $translation['title'];
+                        $add_ons[$key]['description'] = $translation['description'];
+                    }
+                }
+            }
+            
+            $product[$i]['product_add_ons'] = $add_ons;
             $product[$i]['variants'] = get_variants_values_by_pid($product[$i]['id']);
 
             $product[$i]['min_max_price'] = get_min_max_price_of_product($product[$i]['id']);

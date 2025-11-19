@@ -1187,6 +1187,7 @@ class Api extends CI_Controller
         $this->form_validation->set_rules('longitude', 'longitude', 'trim|xss_clean');
         $this->form_validation->set_rules('city_id', 'city_id', 'trim|xss_clean');
         $this->form_validation->set_rules('slug', 'slug', 'trim|xss_clean');
+        $this->form_validation->set_rules('language', 'language', 'trim|xss_clean');
 
         if (!$this->form_validation->run()) {
 
@@ -1242,6 +1243,8 @@ class Api extends CI_Controller
                 $filters['product_variant_ids'] = isset($product_variant_ids) ? explode(",", $product_variant_ids) : "";
             }
             $user_id = (isset($_POST['user_id'])) ? $_POST['user_id'] : null;
+            $language = (isset($_POST['language']) && !empty($_POST['language'])) ? $this->input->post('language', true) : 'en';
+            $filters['language'] = $language;
 
             $products = fetch_product("", $user_id, (isset($filters)) ? $filters : null, $product_id, $category_id, $limit, $offset, $sort, $order, null, null, $partner_id, $filter_by);
 

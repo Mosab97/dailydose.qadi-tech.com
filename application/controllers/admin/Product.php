@@ -80,6 +80,9 @@ class Product extends CI_Controller
                         if (!empty($product_attributes) && !empty($product_details)) {
                             $this->data['product_attributes'] = $product_attributes;
                         }
+                        
+                        // Load product translations
+                        $this->data['product_translations'] = $this->product_model->get_product_translations($_GET['edit_id']);
                     } else {
                         redirect('admin/product/create_product', 'refresh');
                     }

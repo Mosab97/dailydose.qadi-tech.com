@@ -266,6 +266,20 @@ class Product_model extends CI_Model
                 }
             }
         }
+        
+        // Save product translations if provided
+        if (isset($data['translations']) && !empty($data['translations'])) {
+            if (isset($data['edit_product_id'])) {
+                // Save translations for edited product
+                $this->save_product_translations($data['edit_product_id'], $data['translations']);
+            } else if (isset($last_product_id) && !empty($last_product_id)) {
+                // Save translations for all new products (multiple branches)
+                foreach ($last_product_id as $product_id) {
+                    $this->save_product_translations($product_id, $data['translations']);
+                }
+            }
+        }
+        
         if (isset($product_ids)) {
             return $product_ids;
         }
@@ -631,5 +645,163 @@ class Product_model extends CI_Model
         $result = $this->db->get()->result_array();
 
         return $result;
+    }
+
+    /**
+     * Save product translations for a given product
+     * @param int $product_id - Product ID
+     * @param array $translations - Array of translations with language codes as keys
+     *                              Example: ['en' => ['name' => '...', 'short_description' => '...'], 'ar' => [...]]
+     * @return bool
+     */
+    public function save_product_translations($product_id, $translations)
+    {
+        if (empty($product_id) || empty($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            if (empty($translation_data['name'])) {
+                continue; // Skip if name is empty
+            }
+
+            $data = [
+                'product_id' => $product_id,
+                'language_code' => $language_code,
+                'name' => $translation_data['name'],
+                'short_description' => isset($translation_data['short_description']) ? $translation_data['short_description'] : null,
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('product_id', $product_id)
+                                 ->where('language_code', $language_code)
+                                 ->get('product_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('product_translations', [
+                             'name' => $data['name'],
+                             'short_description' => $data['short_description'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('product_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get product translations
+     * @param int $product_id - Product ID
+     * @param string $language_code - Optional language code to get specific translation
+     * @return array
+     */
+    public function get_product_translations($product_id, $language_code = null)
+    {
+        if (empty($product_id)) {
+            return [];
+        }
+
+        $this->db->where('product_id', $product_id);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('product_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'name' => $row['name'],
+                'short_description' => $row['short_description'],
+            ];
+        }
+
+        return $formatted;
+    }
+
+    /**
+     * Save add-on translations for a given add-on
+     * @param int $add_on_id - Add-on ID
+     * @param array $translations - Array of translations with language codes as keys
+     *                              Example: ['en' => ['title' => '...', 'description' => '...'], 'ar' => [...]]
+     * @return bool
+     */
+    public function save_add_on_translations($add_on_id, $translations)
+    {
+        if (empty($add_on_id) || empty($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            if (empty($translation_data['title'])) {
+                continue; // Skip if title is empty
+            }
+
+            $data = [
+                'add_on_id' => $add_on_id,
+                'language_code' => $language_code,
+                'title' => $translation_data['title'],
+                'description' => isset($translation_data['description']) ? $translation_data['description'] : null,
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('add_on_id', $add_on_id)
+                                 ->where('language_code', $language_code)
+                                 ->get('product_add_on_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('product_add_on_translations', [
+                             'title' => $data['title'],
+                             'description' => $data['description'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('product_add_on_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get add-on translations
+     * @param int $add_on_id - Add-on ID
+     * @param string $language_code - Optional language code to get specific translation
+     * @return array
+     */
+    public function get_add_on_translations($add_on_id, $language_code = null)
+    {
+        if (empty($add_on_id)) {
+            return [];
+        }
+
+        $this->db->where('add_on_id', $add_on_id);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('product_add_on_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'title' => $row['title'],
+                'description' => $row['description'],
+            ];
+        }
+
+        return $formatted;
     }
 }
