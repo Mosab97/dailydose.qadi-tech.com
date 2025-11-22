@@ -1896,6 +1896,14 @@ $(document).on("submit", ".container-fluid .form-submit-event", function (e) {
   var btn_html = submit_btn.html();
   var btn_val = submit_btn.val();
   var button_text = (btn_html && btn_html !== "undefined") ? btn_html : btn_val;
+  
+  // Sync English attribute name field if this is an attribute form
+  if ($("#attribute_name").length) {
+    // Sync English field - form fields will be sent automatically, no need to append JSON
+    var name_en = $("#attribute_name").val();
+    $("#attribute_name_en").val(name_en);
+  }
+  
   formData.append(csrfName, csrfHash);
 
   $.ajax({
@@ -7077,12 +7085,42 @@ $("#save_city").on("click", function (event) {
 
 $(document).on("click", ".edit_attribute", function (e, rows) {
   e.preventDefault();
+  var attribute_id = $(this).data("id");
   var attribute_value_ids = $(this).data("attribute_value_ids");
   var attribute_values = $(this).data("attribute_values");
+  
+  // Populate main form fields
   $("#name").val($(this).data("name"));
-  $('input[name="edit_attribute_id"]').val($(this).data("id"));
+  $("#modal_attribute_name_en").val($(this).data("name"));
+  $('input[name="edit_attribute_id"]').val(attribute_id);
   $("#attribute_value").val(attribute_values);
   $('input[name="attribute_value_ids"]').val(attribute_value_ids);
+
+  // Load attribute translations
+  $.ajax({
+    url: base_url + from + "/attributes/get_attribute_translations",
+    type: "GET",
+    data: { attribute_id: attribute_id },
+    dataType: "json",
+    success: function(response) {
+      if (response && !response.error && response.data) {
+        var translations = response.data;
+        // Populate translation fields
+        if (translations['ar']) {
+          $("#modal_attribute_name_ar").val(translations['ar'].name || '');
+        }
+        if (translations['he']) {
+          $("#modal_attribute_name_he").val(translations['he'].name || '');
+        }
+        if (translations['en']) {
+          $("#modal_attribute_name_en").val(translations['en'].name || $("#name").val());
+        }
+      }
+    },
+    error: function() {
+      console.log("Could not load translations for attribute");
+    }
+  });
 
   if (attribute_values.search(",") > 0) {
     var attribute_values = attribute_values.split(",");
@@ -7107,6 +7145,16 @@ $(document).on("click", "#add_attribute_val", function (e) {
   show_attribute_values();
 });
 
+// Sync English attribute name field with main field
+$(document).on('input', '#attribute_name', function() {
+  $('#attribute_name_en').val($(this).val());
+});
+
+// Sync modal English attribute name field with main field
+$(document).on('input', '#name', function() {
+  $('#modal_attribute_name_en').val($(this).val());
+});
+
 function show_attribute_values(
   attribute_values = [],
   attribute_value_ids = []
@@ -7115,29 +7163,125 @@ function show_attribute_values(
 
   if (attribute_values.length > 0) {
     $.each(attribute_values, function (key, val) {
-      html += `<div class="form-group row">
+      var value_id = attribute_value_ids[key] || '';
+      var value_index = key;
+      html += `<div class="form-group row attribute-value-row" data-value-id="${value_id}" data-value-index="${value_index}">
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" placeholder="Values Name" name="value_name[]" value="${val}" required>
-                            <input type="hidden" class="form-control" name="value_id[]" value="${attribute_value_ids[key]}" required>
+                            <input type="text" class="form-control attribute-value-en" placeholder="Value Name (English)" name="value_name[]" value="${val}" required>
+                            <input type="hidden" class="form-control" name="value_id[]" value="${value_id}" required>
+                            
+                            <!-- Language Tabs for Attribute Value -->
+                            <ul class="nav nav-tabs mt-2" id="valueTabs${value_index}" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="value-${value_index}-en-tab" data-toggle="tab" href="#value-${value_index}-en" role="tab">English</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="value-${value_index}-ar-tab" data-toggle="tab" href="#value-${value_index}-ar" role="tab">Arabic</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="value-${value_index}-he-tab" data-toggle="tab" href="#value-${value_index}-he" role="tab">Hebrew</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-2" id="valueTabContent${value_index}">
+                                <div class="tab-pane fade show active" id="value-${value_index}-en" role="tabpanel">
+                                    <input type="text" class="form-control" placeholder="Value (English)" name="attribute_value_translations[${value_index}][en][value]" value="${val}">
+                                </div>
+                                <div class="tab-pane fade" id="value-${value_index}-ar" role="tabpanel">
+                                    <input type="text" class="form-control" dir="rtl" placeholder="القيمة (Arabic)" name="attribute_value_translations[${value_index}][ar][value]" value="">
+                                </div>
+                                <div class="tab-pane fade" id="value-${value_index}-he" role="tabpanel">
+                                    <input type="text" class="form-control" dir="rtl" placeholder="הערך (Hebrew)" name="attribute_value_translations[${value_index}][he][value]" value="">
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-2">
-                        <button type="button" class="btn btn-tool update_attribute_values_status " data-id="${attribute_value_ids[key]}" data-table="attribute_values" > <i class="text-danger far fa-times-circle fa-2x "></i> </button>
+                        <button type="button" class="btn btn-tool update_attribute_values_status " data-id="${value_id}" data-table="attribute_values" > <i class="text-danger far fa-times-circle fa-2x "></i> </button>
                         </div>
                     </div>`;
+      
+      // Load translations for existing attribute value
+      if (value_id && value_id !== '') {
+        load_attribute_value_translations(value_id, value_index);
+      }
     });
   } else {
-    html = `<div class="form-group row">
+    html = `<div class="form-group row attribute-value-row" data-value-index="0">
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Values Name" name="value_name[]" value="" required>
+                        <input type="text" class="form-control attribute-value-en" placeholder="Value Name (English)" name="value_name[]" value="" required>
                         <input type="hidden" class="form-control" name="value_id[]" value="" required>
+                        
+                        <!-- Language Tabs for Attribute Value -->
+                        <ul class="nav nav-tabs mt-2" id="valueTabs0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="value-0-en-tab" data-toggle="tab" href="#value-0-en" role="tab">English</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="value-0-ar-tab" data-toggle="tab" href="#value-0-ar" role="tab">Arabic</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="value-0-he-tab" data-toggle="tab" href="#value-0-he" role="tab">Hebrew</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content mt-2" id="valueTabContent0">
+                            <div class="tab-pane fade show active" id="value-0-en" role="tabpanel">
+                                <input type="text" class="form-control" placeholder="Value (English)" name="attribute_value_translations[0][en][value]" value="">
+                            </div>
+                            <div class="tab-pane fade" id="value-0-ar" role="tabpanel">
+                                <input type="text" class="form-control" dir="rtl" placeholder="القيمة (Arabic)" name="attribute_value_translations[0][ar][value]" value="">
+                            </div>
+                            <div class="tab-pane fade" id="value-0-he" role="tabpanel">
+                                <input type="text" class="form-control" dir="rtl" placeholder="הערך (Hebrew)" name="attribute_value_translations[0][he][value]" value="">
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-2">
-                    <button type="button" class="btn btn-tool " > <i class="text-danger far fa-times-circle fa-2x "></i> </button>
+                    <button type="button" class="btn btn-tool remove-attribute-value" > <i class="text-danger far fa-times-circle fa-2x "></i> </button>
                     </div>
                 </div>`;
   }
   $("#attribute_values_html").append(html);
+  
+  // Sync English fields
+  $(document).off('input', '.attribute-value-en').on('input', '.attribute-value-en', function() {
+    var $row = $(this).closest('.attribute-value-row');
+    var valueIndex = $row.data('value-index');
+    var value = $(this).val();
+    $row.find(`input[name="attribute_value_translations[${valueIndex}][en][value]"]`).val(value);
+  });
 }
+
+// Function to load attribute value translations
+function load_attribute_value_translations(attribute_value_id, value_index) {
+  $.ajax({
+    url: base_url + from + "/attributes/get_attribute_value_translations",
+    type: "GET",
+    data: { attribute_value_id: attribute_value_id },
+    dataType: "json",
+    success: function(response) {
+      if (response && !response.error && response.data) {
+        var translations = response.data;
+        var $row = $(`.attribute-value-row[data-value-id="${attribute_value_id}"]`);
+        if (translations['ar']) {
+          $row.find(`input[name="attribute_value_translations[${value_index}][ar][value]"]`).val(translations['ar'].value || '');
+        }
+        if (translations['he']) {
+          $row.find(`input[name="attribute_value_translations[${value_index}][he][value]"]`).val(translations['he'].value || '');
+        }
+        if (translations['en']) {
+          $row.find(`input[name="attribute_value_translations[${value_index}][en][value]"]`).val(translations['en'].value || '');
+        }
+      }
+    },
+    error: function() {
+      console.log("Could not load translations for attribute value");
+    }
+  });
+}
+
+// Remove attribute value row
+$(document).on("click", ".remove-attribute-value", function() {
+  $(this).closest('.attribute-value-row').remove();
+});
 
 $(document).on("click", ".update_attribute_values_status", function () {
   var cat_id = $(this).data("id");
@@ -7186,8 +7330,79 @@ $(document).on("click", ".update_attribute_values_status", function () {
 
 $("#edit-attributes-form").on("submit", function (e) {
   e.preventDefault();
+  
+  // Sync English translation fields before submit
+  var name_en = $("#name").val();
+  $("#modal_attribute_name_en").val(name_en);
+  
+  // Collect attribute translations
+  var attribute_translations = {};
+  var en_name = $("#modal_attribute_name_en").val();
+  var ar_name = $("#modal_attribute_name_ar").val();
+  var he_name = $("#modal_attribute_name_he").val();
+  
+  if (en_name) {
+    attribute_translations['en'] = { name: en_name };
+  }
+  if (ar_name && ar_name.trim() !== '') {
+    attribute_translations['ar'] = { name: ar_name };
+  }
+  if (he_name && he_name.trim() !== '') {
+    attribute_translations['he'] = { name: he_name };
+  }
+  
   var formdata = new FormData(this);
   formdata.append(csrfName, csrfHash);
+  
+  // Add translations to form data
+  if (Object.keys(attribute_translations).length > 0) {
+    formdata.append('attribute_translations', JSON.stringify(attribute_translations));
+  }
+  
+  // Collect attribute value translations
+  var attribute_value_translations = {};
+  $('.attribute-value-row').each(function() {
+    var value_index = $(this).data('value-index');
+    var value_id = $(this).data('value-id');
+    var en_value = $(this).find(`input[name="attribute_value_translations[${value_index}][en][value]"]`).val();
+    var ar_value = $(this).find(`input[name="attribute_value_translations[${value_index}][ar][value]"]`).val();
+    var he_value = $(this).find(`input[name="attribute_value_translations[${value_index}][he][value]"]`).val();
+    
+    if (value_id && value_id !== '') {
+      var translations = {};
+      if (en_value) {
+        translations['en'] = { value: en_value };
+      }
+      if (ar_value && ar_value.trim() !== '') {
+        translations['ar'] = { value: ar_value };
+      }
+      if (he_value && he_value.trim() !== '') {
+        translations['he'] = { value: he_value };
+      }
+      if (Object.keys(translations).length > 0) {
+        attribute_value_translations[value_id] = translations;
+      }
+    } else {
+      // For new values, use index
+      var translations = {};
+      if (en_value) {
+        translations['en'] = { value: en_value };
+      }
+      if (ar_value && ar_value.trim() !== '') {
+        translations['ar'] = { value: ar_value };
+      }
+      if (he_value && he_value.trim() !== '') {
+        translations['he'] = { value: he_value };
+      }
+      if (Object.keys(translations).length > 0) {
+        attribute_value_translations[value_index] = translations;
+      }
+    }
+  });
+  
+  if (Object.keys(attribute_value_translations).length > 0) {
+    formdata.append('attribute_value_translations', JSON.stringify(attribute_value_translations));
+  }
 
   $.ajax({
     type: "POST",
@@ -7211,6 +7426,7 @@ $("#edit-attributes-form").on("submit", function (e) {
             result.message +
             "</span> "
         });
+        $('#attribute-modal').modal('hide');
       } else {
         iziToast.error({
           message: "<span>" + result.message + "</span> "

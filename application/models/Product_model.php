@@ -202,7 +202,7 @@ class Product_model extends CI_Model
         if (!empty($add_ons)) {
             // Insert add-ons one by one to get IDs for translation saving
             foreach ($add_ons as $add_on_item) {
-                $this->db->insert('product_add_ons', $add_on_item['data']);
+                $this->db->insert('product_add_ons', $add_on_item['add_on_data']);
                 $add_on_id = $this->db->insert_id();
                 
                 // Save translations if available

@@ -27,10 +27,33 @@
                                 <?php if (isset($fetched_data[0]['id'])) { ?>
                                     <input type="hidden" name="edit_attribute" value="<?= @$fetched_data[0]['id'] ?>">
                                 <?php  } ?>
+                                <!-- Language Tabs for Attribute Name -->
                                 <div class="form-group row">
                                     <label for="name" class="col-sm-2 col-form-label">Attribute Name <span class='text-danger text-sm'>*</span></label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control" placeholder="Name" name="name" value="<?= @$fetched_data[0]['name'] ?>">
+                                        <ul class="nav nav-tabs" id="attributeNameTabs" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="attr-name-en-tab" data-toggle="tab" href="#attr-name-en" role="tab">English</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="attr-name-ar-tab" data-toggle="tab" href="#attr-name-ar" role="tab">Arabic</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="attr-name-he-tab" data-toggle="tab" href="#attr-name-he" role="tab">Hebrew</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content mt-2" id="attributeNameTabContent">
+                                            <div class="tab-pane fade show active" id="attr-name-en" role="tabpanel">
+                                                <input type="text" class="form-control" id="attribute_name" placeholder="Attribute Name (English)" name="name" value="<?= @$fetched_data[0]['name'] ?>">
+                                                <input type="hidden" id="attribute_name_en" name="attribute_translations[en][name]" value="<?= isset($attribute_translations['en']['name']) ? $attribute_translations['en']['name'] : @$fetched_data[0]['name'] ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="attr-name-ar" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="اسم الخاصية (Arabic)" name="attribute_translations[ar][name]" id="attribute_name_ar" value="<?= isset($attribute_translations['ar']['name']) ? $attribute_translations['ar']['name'] : '' ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="attr-name-he" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="שם התכונה (Hebrew)" name="attribute_translations[he][name]" id="attribute_name_he" value="<?= isset($attribute_translations['he']['name']) ? $attribute_translations['he']['name'] : '' ?>">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -74,10 +97,33 @@
                                     <div class="card-body">
                                         <input type="hidden" name="edit_attribute_id" value="">
                                         <input type="hidden" name="attribute_value_ids" value="">
+                                        <!-- Language Tabs for Attribute Name in Modal -->
                                         <div class="form-group row">
                                             <label for="name" class="col-sm-2 col-form-label">Attribute Name <span class='text-danger text-sm'>*</span></label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" placeholder="Name" id="name" name="name" value="">
+                                                <ul class="nav nav-tabs" id="modalAttributeNameTabs" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="modal-attr-name-en-tab" data-toggle="tab" href="#modal-attr-name-en" role="tab">English</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="modal-attr-name-ar-tab" data-toggle="tab" href="#modal-attr-name-ar" role="tab">Arabic</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="modal-attr-name-he-tab" data-toggle="tab" href="#modal-attr-name-he" role="tab">Hebrew</a>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-2" id="modalAttributeNameTabContent">
+                                                    <div class="tab-pane fade show active" id="modal-attr-name-en" role="tabpanel">
+                                                        <input type="text" class="form-control" placeholder="Attribute Name (English)" id="name" name="name" value="">
+                                                        <input type="hidden" id="modal_attribute_name_en" name="attribute_translations[en][name]" value="">
+                                                    </div>
+                                                    <div class="tab-pane fade" id="modal-attr-name-ar" role="tabpanel">
+                                                        <input type="text" class="form-control" dir="rtl" placeholder="اسم الخاصية (Arabic)" name="attribute_translations[ar][name]" id="modal_attribute_name_ar" value="">
+                                                    </div>
+                                                    <div class="tab-pane fade" id="modal-attr-name-he" role="tabpanel">
+                                                        <input type="text" class="form-control" dir="rtl" placeholder="שם התכונה (Hebrew)" name="attribute_translations[he][name]" id="modal_attribute_name_he" value="">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <h6 class="modal-title">Attributes Values</h6>

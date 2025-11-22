@@ -891,7 +891,9 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
             $rating = $t->rating_model->fetch_rating($product[$i]['id'], '', '', 8, 0, 'pr.id', 'desc', '', 1);
             $product[$i]['review_images'] = (!empty($rating)) ? [$rating] : array();
             $product[$i]['tax_percentage'] = (isset($product[$i]['tax_percentage']) && intval($product[$i]['tax_percentage']) > 0) ? $product[$i]['tax_percentage'] : '0';
-            $product[$i]['attributes'] = get_attribute_values_by_pid($product[$i]['id']);
+            // Get language code from filter, default to 'en'
+            $attribute_language = (isset($filter['language']) && !empty($filter['language'])) ? $filter['language'] : 'en';
+            $product[$i]['attributes'] = get_attribute_values_by_pid($product[$i]['id'], $attribute_language);
             // Get product add-ons with translations
             $add_ons = fetch_details(['product_id' => $product[$i]['id'], 'status' => 1], 'product_add_ons', 'id,product_id,title,description,price,calories');
             
@@ -917,7 +919,9 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
             }
             
             $product[$i]['product_add_ons'] = $add_ons;
-            $product[$i]['variants'] = get_variants_values_by_pid($product[$i]['id']);
+            // Get language code from filter, default to 'en'
+            $variant_language = (isset($filter['language']) && !empty($filter['language'])) ? $filter['language'] : 'en';
+            $product[$i]['variants'] = get_variants_values_by_pid($product[$i]['id'], [1], $variant_language);
 
             $product[$i]['min_max_price'] = get_min_max_price_of_product($product[$i]['id']);
             $product[$i]['stock_type'] = isset($product[$i]['stock_type']) && !empty($product[$i]['stock_type']) ? $product[$i]['stock_type'] : '';
@@ -1104,8 +1108,9 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
     if (isset($filter) && $filter != null) {
 
         if (!empty($attr_value_ids)) {
-
-            $response['filters'] = get_attribute_values_by_id($attr_value_ids);
+            // Get language code from filter, default to 'en'
+            $filter_language = (isset($filter['language']) && !empty($filter['language'])) ? $filter['language'] : 'en';
+            $response['filters'] = get_attribute_values_by_id($attr_value_ids, $filter_language);
         }
     } else {
 
@@ -1391,13 +1396,25 @@ function update_wallet_balance($operation, $user_id, $amount, $message = "Balanc
 
 
 
-function get_attribute_values_by_pid($id)
+function get_attribute_values_by_pid($id, $language_code = 'en')
 {
     $t = &get_instance();
     $swatche_type = $swatche_values1 = array();
-    $attribute_values = $t->db->select(" group_concat(`av`.`id`) as ids,group_concat(' ',`av`.`value`) as value ,`a`.`id` as attr_id,`a`.`name` as attr_name, a.name, GROUP_CONCAT(av.swatche_type ORDER BY av.id ASC ) as swatche_type , GROUP_CONCAT(av.swatche_value  ) as swatche_value")
+    
+    // Escape language code for SQL security
+    $language_code = $t->db->escape_str($language_code);
+    
+    $attribute_values = $t->db->select(" group_concat(`av`.`id`) as ids,
+        group_concat(' ', COALESCE(avt.value, av.value)) as value,
+        `a`.`id` as attr_id,
+        COALESCE(at.name, a.name) as attr_name,
+        a.name,
+        GROUP_CONCAT(av.swatche_type ORDER BY av.id ASC ) as swatche_type,
+        GROUP_CONCAT(av.swatche_value  ) as swatche_value")
         ->join('attribute_values av ', 'FIND_IN_SET(av.id, pa.attribute_value_ids ) > 0', 'inner')
         ->join('attributes a', 'a.id = av.attribute_id', 'inner')
+        ->join("attribute_translations at", "at.attribute_id = a.id AND at.language_code = '{$language_code}'", 'LEFT')
+        ->join("attribute_value_translations avt", "avt.attribute_value_id = av.id AND avt.language_code = '{$language_code}'", 'LEFT')
         ->where('pa.product_id', $id)->group_by('`a`.`id`, `a`.`name`')->get('product_attributes pa')->result_array();
     // print_r($attribute_values);
 
@@ -1424,11 +1441,21 @@ function get_attribute_values_by_pid($id)
     return $attribute_values;
 }
 
-function get_attribute_values_by_id($id)
+function get_attribute_values_by_id($id, $language_code = 'en')
 {
     $t = &get_instance();
-    $attribute_values = $t->db->select(" GROUP_CONCAT(av.value  ORDER BY av.id ASC) as attribute_values ,GROUP_CONCAT(av.id ORDER BY av.id ASC ) as attribute_values_id ,a.name , GROUP_CONCAT(av.swatche_type ORDER BY av.id ASC ) as swatche_type , GROUP_CONCAT(av.swatche_value ORDER BY av.id ASC ) as swatche_value")
+    
+    // Escape language code for SQL security
+    $language_code = $t->db->escape_str($language_code);
+    
+    $attribute_values = $t->db->select(" GROUP_CONCAT(COALESCE(avt.value, av.value) ORDER BY av.id ASC) as attribute_values,
+        GROUP_CONCAT(av.id ORDER BY av.id ASC ) as attribute_values_id,
+        COALESCE(at.name, a.name) as name,
+        GROUP_CONCAT(av.swatche_type ORDER BY av.id ASC ) as swatche_type,
+        GROUP_CONCAT(av.swatche_value ORDER BY av.id ASC ) as swatche_value")
         ->join(' attributes a ', 'av.attribute_id = a.id ', 'inner')
+        ->join("attribute_translations at", "at.attribute_id = a.id AND at.language_code = '{$language_code}'", 'LEFT')
+        ->join("attribute_value_translations avt", "avt.attribute_value_id = av.id AND avt.language_code = '{$language_code}'", 'LEFT')
         ->where_in('av.id', $id)->group_by('`a`.`name`')->get('attribute_values av')->result_array();
     if (!empty($attribute_values)) {
         for ($i = 0; $i < count($attribute_values); $i++) {
@@ -1456,12 +1483,24 @@ function get_attribute_values_by_id($id)
     return $attribute_values;
 }
 
-function get_variants_values_by_pid($id, $status = [1])
+function get_variants_values_by_pid($id, $status = [1], $language_code = 'en')
 {
     $t = &get_instance();
-    $varaint_values = $t->db->select("pv.*,pv.`product_id`,group_concat(`av`.`id`  ORDER BY av.id ASC) as variant_ids,group_concat( ' ' ,`a`.`name` ORDER BY av.id ASC) as attr_name, group_concat(`av`.`value` ORDER BY av.id ASC) as variant_values , pv.price as price , GROUP_CONCAT(av.swatche_type ORDER BY av.id ASC ) as swatche_type , GROUP_CONCAT(av.swatche_value ORDER BY av.id ASC ) as swatche_value")
+    
+    // Escape language code for SQL security
+    $language_code = $t->db->escape_str($language_code);
+    
+    $varaint_values = $t->db->select("pv.*,pv.`product_id`,
+        group_concat(`av`.`id`  ORDER BY av.id ASC) as variant_ids,
+        group_concat( ' ' , COALESCE(at.name, a.name) ORDER BY av.id ASC) as attr_name,
+        group_concat(COALESCE(avt.value, av.value) ORDER BY av.id ASC) as variant_values,
+        pv.price as price,
+        GROUP_CONCAT(av.swatche_type ORDER BY av.id ASC ) as swatche_type,
+        GROUP_CONCAT(av.swatche_value ORDER BY av.id ASC ) as swatche_value")
         ->join('attribute_values av ', 'FIND_IN_SET(av.id, pv.attribute_value_ids ) > 0', 'left')
         ->join('attributes a', 'a.id = av.attribute_id', 'left')
+        ->join("attribute_translations at", "at.attribute_id = a.id AND at.language_code = '{$language_code}'", 'LEFT')
+        ->join("attribute_value_translations avt", "avt.attribute_value_id = av.id AND avt.language_code = '{$language_code}'", 'LEFT')
         ->where(['pv.product_id' => $id])->where_in('pv.status', $status)->group_by('`pv`.`id`')->order_by('pv.id')->get('product_variants pv')->result_array();
 
     if (!empty($varaint_values)) {

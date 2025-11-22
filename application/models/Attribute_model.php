@@ -45,12 +45,25 @@ class Attribute_model extends CI_Model
                                 if ($key === "" || $key === 0 || $key === "0") {
                 
                                     $this->db->insert('attribute_values', $tempRow);
+                                    $new_value_id = $this->db->insert_id();
+                                    // Save attribute value translations if provided
+                                    if (isset($data['attribute_value_translations'][$key]) && !empty($data['attribute_value_translations'][$key])) {
+                                        $this->save_attribute_value_translations($new_value_id, $data['attribute_value_translations'][$key]);
+                                    }
                                 } else {
                                     $this->db->set($tempRow)->where('id', $key)->update('attribute_values');
-                                   
+                                    // Save attribute value translations if provided
+                                    if (isset($data['attribute_value_translations'][$key]) && !empty($data['attribute_value_translations'][$key])) {
+                                        $this->save_attribute_value_translations($key, $data['attribute_value_translations'][$key]);
+                                    }
                                 }
                             }
                             $this->db->set($attr_data)->where('id', $data['edit_attribute_id'])->update('attributes');
+                            
+                            // Save attribute translations if provided
+                            if (isset($data['attribute_translations']) && !empty($data['attribute_translations'])) {
+                                $this->save_attribute_translations($data['edit_attribute_id'], $data['attribute_translations']);
+                            }
             }
         } else {
             $this->db->insert('attributes', $attr_data);
@@ -64,10 +77,32 @@ class Attribute_model extends CI_Model
                     $rows[] = $tempRow;
                 }
                 $this->db->insert_batch('attribute_values', $rows);
+                
+                // Save attribute translations if provided
+                if (isset($data['attribute_translations']) && !empty($data['attribute_translations'])) {
+                    $this->save_attribute_translations($insert_id, $data['attribute_translations']);
+                }
+                
+                // Get inserted attribute value IDs and save translations
+                $inserted_values = $this->db->where('attribute_id', $insert_id)->get('attribute_values')->result_array();
+                if (!empty($inserted_values) && isset($data['attribute_value_translations'])) {
+                    $value_index = 0;
+                    foreach ($inserted_values as $inserted_value) {
+                        if (isset($data['attribute_value_translations'][$value_index]) && !empty($data['attribute_value_translations'][$value_index])) {
+                            $this->save_attribute_value_translations($inserted_value['id'], $data['attribute_value_translations'][$value_index]);
+                        }
+                        $value_index++;
+                    }
+                }
+                
                 // return true;
                 return $insert_id;
             } else {
-                return false;
+                // Save attribute translations even if no values
+                if (isset($data['attribute_translations']) && !empty($data['attribute_translations'])) {
+                    $this->save_attribute_translations($insert_id, $data['attribute_translations']);
+                }
+                return $insert_id;
             }
         }
 
@@ -86,6 +121,11 @@ class Attribute_model extends CI_Model
                             'status' => 1
                         );
                         $this->db->insert('attribute_values', $tempRow);
+                        $new_value_id = $this->db->insert_id();
+                        // Save attribute value translations if provided
+                        if (isset($data['attribute_value_translations'][$blankKey]) && !empty($data['attribute_value_translations'][$blankKey])) {
+                            $this->save_attribute_value_translations($new_value_id, $data['attribute_value_translations'][$blankKey]);
+                        }
                     }
                 }
             }
@@ -256,5 +296,175 @@ class Attribute_model extends CI_Model
         }
         $bulkData['data'] = (empty($attribute_set)) ? [] : $attribute_set;
         return $bulkData;
+    }
+
+    /**
+     * Save attribute translations for a given attribute
+     * @param int $attribute_id - Attribute ID
+     * @param array $translations - Array of translations with language codes as keys
+     *                              Example: ['en' => ['name' => '...'], 'ar' => ['name' => '...']]
+     * @return bool
+     */
+    public function save_attribute_translations($attribute_id, $translations)
+    {
+        if (empty($attribute_id) || empty($translations)) {
+            return false;
+        }
+
+        // Ensure translations is an array
+        if (!is_array($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            // Ensure translation_data is an array
+            if (!is_array($translation_data)) {
+                continue;
+            }
+            if (empty($translation_data['name'])) {
+                continue; // Skip if name is empty
+            }
+
+            $data = [
+                'attribute_id' => $attribute_id,
+                'language_code' => $language_code,
+                'name' => $translation_data['name'],
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('attribute_id', $attribute_id)
+                                 ->where('language_code', $language_code)
+                                 ->get('attribute_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('attribute_translations', [
+                             'name' => $data['name'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('attribute_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get attribute translations for a given attribute
+     * @param int $attribute_id - Attribute ID
+     * @param string|null $language_code - Specific language code to retrieve (optional)
+     * @return array - Formatted array with language codes as keys
+     */
+    public function get_attribute_translations($attribute_id, $language_code = null)
+    {
+        if (empty($attribute_id)) {
+            return [];
+        }
+
+        $this->db->where('attribute_id', $attribute_id);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('attribute_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'name' => $row['name'],
+            ];
+        }
+
+        return $formatted;
+    }
+
+    /**
+     * Save attribute value translations for a given attribute value
+     * @param int $attribute_value_id - Attribute Value ID
+     * @param array $translations - Array of translations with language codes as keys
+     *                              Example: ['en' => ['value' => '...'], 'ar' => ['value' => '...']]
+     * @return bool
+     */
+    public function save_attribute_value_translations($attribute_value_id, $translations)
+    {
+        if (empty($attribute_value_id) || empty($translations)) {
+            return false;
+        }
+
+        // Ensure translations is an array
+        if (!is_array($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            // Ensure translation_data is an array
+            if (!is_array($translation_data)) {
+                continue;
+            }
+            if (empty($translation_data['value'])) {
+                continue; // Skip if value is empty
+            }
+
+            $data = [
+                'attribute_value_id' => $attribute_value_id,
+                'language_code' => $language_code,
+                'value' => $translation_data['value'],
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('attribute_value_id', $attribute_value_id)
+                                 ->where('language_code', $language_code)
+                                 ->get('attribute_value_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('attribute_value_translations', [
+                             'value' => $data['value'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('attribute_value_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get attribute value translations for a given attribute value
+     * @param int $attribute_value_id - Attribute Value ID
+     * @param string|null $language_code - Specific language code to retrieve (optional)
+     * @return array - Formatted array with language codes as keys
+     */
+    public function get_attribute_value_translations($attribute_value_id, $language_code = null)
+    {
+        if (empty($attribute_value_id)) {
+            return [];
+        }
+
+        $this->db->where('attribute_value_id', $attribute_value_id);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('attribute_value_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'value' => $row['value'],
+            ];
+        }
+
+        return $formatted;
     }
 }

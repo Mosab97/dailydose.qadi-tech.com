@@ -26,6 +26,16 @@ class Attribute extends CI_Controller
             if (isset($_GET['edit_id'])) {
                 $this->data['fetched_data'] = $this->db->select(' attr.* ,GROUP_CONCAT(av.value) as attribute_values')->join('attribute_values av', 'av.attribute_id = attr.id')
                     ->where(['attr.id' => $_GET['edit_id']])->group_by('attr.id')->get('attributes attr')->result_array();
+                
+                // Load attribute translations
+                $this->data['attribute_translations'] = $this->attribute_model->get_attribute_translations($_GET['edit_id']);
+                
+                // Load attribute value translations
+                $attribute_values = $this->db->where('attribute_id', $_GET['edit_id'])->get('attribute_values')->result_array();
+                $this->data['attribute_value_translations'] = [];
+                foreach ($attribute_values as $av) {
+                    $this->data['attribute_value_translations'][$av['id']] = $this->attribute_model->get_attribute_value_translations($av['id']);
+                }
             }
             $this->load->view('admin/template', $this->data);
         } else {
@@ -70,6 +80,39 @@ class Attribute extends CI_Controller
                 $this->response['message'] = validation_errors();
                 print_r(json_encode($this->response));
             } else {
+                // Handle attribute translations - form fields create array, but we might also get JSON string
+                if (isset($_POST['attribute_translations'])) {
+                    if (is_string($_POST['attribute_translations']) && !empty($_POST['attribute_translations'])) {
+                        // If it's a JSON string, parse it
+                        $parsed = json_decode($_POST['attribute_translations'], true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($parsed)) {
+                            $_POST['attribute_translations'] = $parsed;
+                        } else {
+                            // If JSON parsing fails, unset it to avoid errors
+                            unset($_POST['attribute_translations']);
+                        }
+                    } elseif (!is_array($_POST['attribute_translations'])) {
+                        // If it's neither string nor array, unset it
+                        unset($_POST['attribute_translations']);
+                    }
+                }
+                
+                // Handle attribute value translations
+                if (isset($_POST['attribute_value_translations'])) {
+                    if (is_string($_POST['attribute_value_translations']) && !empty($_POST['attribute_value_translations'])) {
+                        // If it's a JSON string, parse it
+                        $parsed = json_decode($_POST['attribute_value_translations'], true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($parsed)) {
+                            $_POST['attribute_value_translations'] = $parsed;
+                        } else {
+                            // If JSON parsing fails, unset it to avoid errors
+                            unset($_POST['attribute_value_translations']);
+                        }
+                    } elseif (!is_array($_POST['attribute_value_translations'])) {
+                        // If it's neither string nor array, unset it
+                        unset($_POST['attribute_value_translations']);
+                    }
+                }
                 if (isset($_POST['edit_attribute_id'])) {
                     if (is_exist(['name' => $_POST['name']], 'attributes', $_POST['edit_attribute_id'])) {
                         $response["error"]   = true;
@@ -166,6 +209,52 @@ class Attribute extends CI_Controller
             }
 
            
+        } else {
+            redirect('admin/login', 'refresh');
+        }
+    }
+
+    public function get_attribute_translations()
+    {
+        if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
+            $attribute_id = $this->input->get('attribute_id', true);
+            
+            if (empty($attribute_id)) {
+                $this->response['error'] = true;
+                $this->response['message'] = "Attribute ID is required";
+                $this->response['data'] = [];
+            } else {
+                $translations = $this->attribute_model->get_attribute_translations($attribute_id);
+                
+                $this->response['error'] = false;
+                $this->response['message'] = "Translations retrieved successfully";
+                $this->response['data'] = $translations;
+            }
+            
+            print_r(json_encode($this->response));
+        } else {
+            redirect('admin/login', 'refresh');
+        }
+    }
+
+    public function get_attribute_value_translations()
+    {
+        if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
+            $attribute_value_id = $this->input->get('attribute_value_id', true);
+            
+            if (empty($attribute_value_id)) {
+                $this->response['error'] = true;
+                $this->response['message'] = "Attribute Value ID is required";
+                $this->response['data'] = [];
+            } else {
+                $translations = $this->attribute_model->get_attribute_value_translations($attribute_value_id);
+                
+                $this->response['error'] = false;
+                $this->response['message'] = "Translations retrieved successfully";
+                $this->response['data'] = $translations;
+            }
+            
+            print_r(json_encode($this->response));
         } else {
             redirect('admin/login', 'refresh');
         }
