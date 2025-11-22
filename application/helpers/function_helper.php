@@ -895,18 +895,24 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
             // Get product add-ons with translations
             $add_ons = fetch_details(['product_id' => $product[$i]['id'], 'status' => 1], 'product_add_ons', 'id,product_id,title,description,price,calories');
             
-            // Apply translations to add-ons if language is specified
-            if (isset($filter['language']) && !empty($filter['language']) && $filter['language'] != 'en') {
-                $language_code = $filter['language'];
-                foreach ($add_ons as $key => $addon) {
-                    $translation = $t->db->where('add_on_id', $addon['id'])
-                                        ->where('language_code', $language_code)
-                                        ->get('product_add_on_translations')
-                                        ->row_array();
-                    if ($translation) {
-                        $add_ons[$key]['title'] = $translation['title'];
-                        $add_ons[$key]['description'] = $translation['description'];
-                    }
+            // Apply translations to add-ons based on language preference
+            // Default to 'en' if not specified, but always check for translations
+            $language_code = (isset($filter['language']) && !empty($filter['language'])) ? $filter['language'] : 'en';
+            
+            foreach ($add_ons as $key => $addon) {
+                // Try to get translation for the specified language
+                $translation = $t->db->where('add_on_id', $addon['id'])
+                                    ->where('language_code', $language_code)
+                                    ->get('product_add_on_translations')
+                                    ->row_array();
+                
+                if ($translation && !empty($translation['title'])) {
+                    // Use translation if available
+                    $add_ons[$key]['title'] = $translation['title'];
+                    $add_ons[$key]['description'] = (!empty($translation['description'])) ? $translation['description'] : $addon['description'];
+                } else {
+                    // Fallback to original English values
+                    // (Original values are already in $addon, so no change needed)
                 }
             }
             
@@ -983,7 +989,8 @@ function fetch_product($branch_id = NULL, $user_id = NULL, $filter = NULL, $id =
                         $product[$i]['variants'][$k]['cart_count'] = isset($user_cart_data[0]['quantity']) && !empty($user_cart_data[0]['quantity']) ? $user_cart_data[0]['quantity'] : "";
 
                         /** get add details of user */
-                        $add_ons_data = get_product_add_ons($product[$i]['variants'][$k]['id'], $product[$i]['variants'][$k]['product_id'], $user_id, $cart_id);
+                        $add_on_language = (isset($filter['language']) && !empty($filter['language'])) ? $filter['language'] : 'en';
+                        $add_ons_data = get_product_add_ons($product[$i]['variants'][$k]['id'], $product[$i]['variants'][$k]['product_id'], $user_id, $cart_id, $add_on_language);
                         if (!empty($add_ons_data)) {
                             $product[$i]['variants'][$k]['add_ons_data'] = $add_ons_data;
                         } else {
@@ -2031,7 +2038,15 @@ function get_cart_total($user_id, $product_variant_id = false, $is_saved_for_lat
         } else {
             $total[$i] = floatval($data[$i]['price']) * $data[$i]['qty'];
         }
-        $add_ons = get_cart_add_ons($data[$i]['id'], $data[$i]['product_id'], $user_id, $data[$i]['cart_id']);
+        // Get language for add-on translations (from POST/GET or default to 'en')
+        $t = &get_instance();
+        $cart_language = 'en';
+        if ($t->input->post('language', true)) {
+            $cart_language = $t->input->post('language', true);
+        } elseif ($t->input->get('language', true)) {
+            $cart_language = $t->input->get('language', true);
+        }
+        $add_ons = get_cart_add_ons($data[$i]['id'], $data[$i]['product_id'], $user_id, $data[$i]['cart_id'], $cart_language);
 
         if (!empty($add_ons)) {
             $sum = 0;
@@ -2075,11 +2090,28 @@ function get_cart_total($user_id, $product_variant_id = false, $is_saved_for_lat
 
 
 
-function get_cart_add_ons($variant_id, $product_id, $user_id, $cart_id = NULL)
+function get_cart_add_ons($variant_id, $product_id, $user_id, $cart_id = NULL, $language_code = 'en')
 {
+    $t = &get_instance();
     $data = fetch_details(['ca.user_id' => $user_id, "ca.product_id" => $product_id, "ca.product_variant_id" => $variant_id, "ca.cart_id" => $cart_id], "cart_add_ons ca", "*", null, null, null, null, null, null, "product_add_ons pa", "pa.id=ca.add_on_id", false, "ca.add_on_id");
 
     if (!empty($data)) {
+        // Apply translations to add-ons
+        foreach ($data as $key => $addon) {
+            if (isset($addon['id']) && !empty($addon['id'])) {
+                $translation = $t->db->where('add_on_id', $addon['id'])
+                                    ->where('language_code', $language_code)
+                                    ->get('product_add_on_translations')
+                                    ->row_array();
+                
+                if ($translation && !empty($translation['title'])) {
+                    $data[$key]['title'] = $translation['title'];
+                    if (!empty($translation['description'])) {
+                        $data[$key]['description'] = $translation['description'];
+                    }
+                }
+            }
+        }
         return $data;
     } else {
         return false;
@@ -2087,10 +2119,9 @@ function get_cart_add_ons($variant_id, $product_id, $user_id, $cart_id = NULL)
 }
 
 
-function get_product_add_ons($variant_id, $product_id, $user_id, $cart_id)
+function get_product_add_ons($variant_id, $product_id, $user_id, $cart_id, $language_code = 'en')
 {
-
-
+    $t = &get_instance();
     $data = fetch_details(
         [
             'ca.user_id' => $user_id,
@@ -2113,6 +2144,22 @@ function get_product_add_ons($variant_id, $product_id, $user_id, $cart_id)
         "ca.add_on_id"
     );
     if (!empty($data)) {
+        // Apply translations to add-ons
+        foreach ($data as $key => $addon) {
+            if (isset($addon['id']) && !empty($addon['id'])) {
+                $translation = $t->db->where('add_on_id', $addon['id'])
+                                    ->where('language_code', $language_code)
+                                    ->get('product_add_on_translations')
+                                    ->row_array();
+                
+                if ($translation && !empty($translation['title'])) {
+                    $data[$key]['title'] = $translation['title'];
+                    if (!empty($translation['description'])) {
+                        $data[$key]['description'] = $translation['description'];
+                    }
+                }
+            }
+        }
         return $data;
     } else {
         return false;

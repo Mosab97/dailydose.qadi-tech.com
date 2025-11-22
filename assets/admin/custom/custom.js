@@ -6068,12 +6068,46 @@ $("#save_add_ons").on("click", function (event) {
     }
   });
   if (is_exist === false) {
+    // Collect all translation data
+    var translations = {};
+    
+    // English translation
+    var en_title = $("#add_on_title_en").length ? $("#add_on_title_en").val() : title;
+    var en_description = $("#add_on_description_en").length ? $("#add_on_description_en").val() : des;
+    if (en_title) {
+      translations['en'] = {
+        title: en_title,
+        description: en_description || ''
+      };
+    }
+    
+    // Arabic translation
+    var ar_title = $("#add_on_title_ar").val();
+    var ar_description = $("#add_on_description_ar").val();
+    if (ar_title && ar_title.trim() !== '') {
+      translations['ar'] = {
+        title: ar_title,
+        description: ar_description || ''
+      };
+    }
+    
+    // Hebrew translation
+    var he_title = $("#add_on_title_he").val();
+    var he_description = $("#add_on_description_he").val();
+    if (he_title && he_title.trim() !== '') {
+      translations['he'] = {
+        title: he_title,
+        description: he_description || ''
+      };
+    }
+    
     add_on_data.push({
       title: $("#add_on_title").val(),
       description: des ? $("#add_on_description").val() : "",
       price: $("#add_on_price").val(),
       calories: calories ? $("#add_on_calories").val() : "0",
-      status: 1
+      status: 1,
+      translations: translations
     });
     table_data.title = $("#add_on_title").val();
     table_data.description = des ? $("#add_on_description").val() : "";
@@ -6086,10 +6120,17 @@ $("#save_add_ons").on("click", function (event) {
       row: table_data
     });
 
+    // Clear all fields including translation fields
     $("#add_on_title").val("");
     $("#add_on_description").val("");
     $("#add_on_price").val("");
     $("#add_on_calories").val("");
+    $("#add_on_title_en").val("");
+    $("#add_on_description_en").val("");
+    $("#add_on_title_ar").val("");
+    $("#add_on_description_ar").val("");
+    $("#add_on_title_he").val("");
+    $("#add_on_description_he").val("");
     // $("#allow_multiple_qty").val("");
     $('input[name="product_add_ons"]').val(JSON.stringify(add_on_data));
     iziToast.success({
@@ -6143,6 +6184,40 @@ $(document).on("click", "#update_add_ons", function () {
   // var allow_multiple_qty = $("#allow_multiple_qty").val();
   var product_id = $(this).data("product_id");
 
+  // Collect all translation data from all language fields
+  var translations = {};
+  
+  // English translation (from main fields or hidden field)
+  var en_title = $("#add_on_title_en").length ? $("#add_on_title_en").val() : title;
+  var en_description = $("#add_on_description_en").length ? $("#add_on_description_en").val() : des;
+  if (en_title) {
+    translations['en'] = {
+      title: en_title,
+      description: en_description || ''
+    };
+  }
+  
+  // Arabic translation
+  var ar_title = $("#add_on_title_ar").val();
+  var ar_description = $("#add_on_description_ar").val();
+  if (ar_title && ar_title.trim() !== '') {
+    translations['ar'] = {
+      title: ar_title,
+      description: ar_description || ''
+    };
+  }
+  
+  // Hebrew translation
+  var he_title = $("#add_on_title_he").val();
+  var he_description = $("#add_on_description_he").val();
+  if (he_title && he_title.trim() !== '') {
+    translations['he'] = {
+      title: he_title,
+      description: he_description || ''
+    };
+  }
+
+ console.log(translations,'translations');
   Swal.fire({
     title: "Are You Sure !",
     text: "You won't be able to revert this!",
@@ -6164,6 +6239,7 @@ $(document).on("click", "#update_add_ons", function () {
             description: des,
             price: price,
             calories: calories,
+            add_on_translations: translations,
             // allow_multiple_qty: allow_multiple_qty,
             [csrfName]: csrfHash
           },
@@ -6175,10 +6251,18 @@ $(document).on("click", "#update_add_ons", function () {
             if (response.error == false) {
               Swal.fire("Done!", response.message, "success");
               $("table").bootstrapTable("refresh");
+              // Clear all fields including translation fields
               $("#add_on_title").val("");
               $("#add_on_description").val("");
               $("#add_on_price").val("");
               $("#add_on_calories").val("");
+              $("#add_on_title_en").val("");
+              $("#add_on_description_en").val("");
+              $("#add_on_title_ar").val("");
+              $("#add_on_description_ar").val("");
+              $("#add_on_title_he").val("");
+              $("#add_on_description_he").val("");
+              $('input[name="add_on_id"]').val("");
               // $("#allow_multiple_qty").val("");
             } else {
               Swal.fire("Oops...", response.message, "warning");
@@ -6201,6 +6285,39 @@ $(document).on("click", "#add_new_add_ons", function (e) {
   // var allow_multiple_qty = $("#allow_multiple_qty").val();
   var product_id = $(this).data("product_id");
 
+  // Collect all translation data from all language fields
+  var translations = {};
+  
+  // English translation (from main fields or hidden field)
+  var en_title = $("#add_on_title_en").length ? $("#add_on_title_en").val() : title;
+  var en_description = $("#add_on_description_en").length ? $("#add_on_description_en").val() : des;
+  if (en_title) {
+    translations['en'] = {
+      title: en_title,
+      description: en_description || ''
+    };
+  }
+  
+  // Arabic translation
+  var ar_title = $("#add_on_title_ar").val();
+  var ar_description = $("#add_on_description_ar").val();
+  if (ar_title && ar_title.trim() !== '') {
+    translations['ar'] = {
+      title: ar_title,
+      description: ar_description || ''
+    };
+  }
+  
+  // Hebrew translation
+  var he_title = $("#add_on_title_he").val();
+  var he_description = $("#add_on_description_he").val();
+  if (he_title && he_title.trim() !== '') {
+    translations['he'] = {
+      title: he_title,
+      description: he_description || ''
+    };
+  }
+
   Swal.fire({
     title: "Are You Sure !",
     text: "You won't be able to revert this!",
@@ -6221,6 +6338,7 @@ $(document).on("click", "#add_new_add_ons", function (e) {
             description: des,
             price: price,
             calories: calories,
+            add_on_translations: translations,
             // allow_multiple_qty: allow_multiple_qty,
             [csrfName]: csrfHash
           },
@@ -6232,10 +6350,18 @@ $(document).on("click", "#add_new_add_ons", function (e) {
             if (response.error == false) {
               Swal.fire("Done!", response.message, "success");
               $("table").bootstrapTable("refresh");
+              // Clear all fields including translation fields
               $("#add_on_title").val("");
               $("#add_on_description").val("");
               $("#add_on_price").val("");
               $("#add_on_calories").val("");
+              $("#add_on_title_en").val("");
+              $("#add_on_description_en").val("");
+              $("#add_on_title_ar").val("");
+              $("#add_on_description_ar").val("");
+              $("#add_on_title_he").val("");
+              $("#add_on_description_he").val("");
+              $('input[name="add_on_id"]').val("");
               // $("#allow_multiple_qty").val("");
             } else {
               Swal.fire("Oops...", response.message, "warning");

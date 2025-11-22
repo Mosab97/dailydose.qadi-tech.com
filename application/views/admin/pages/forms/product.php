@@ -278,22 +278,68 @@
                                                         <option value=""></option>
                                                         <?php if (isset($add_on_snaps) && !empty($add_on_snaps)) {
                                                             foreach ($add_on_snaps as $add_on_snap) { ?>
-                                                                <option value='<?= $add_on_snap['title'] ?>' data-price="<?= $add_on_snap['price'] ?>" data-description="<?= $add_on_snap['description'] ?>" data-calories="<?= $add_on_snap['calories'] ?>"><?= $add_on_snap['title'] ?></option>
+                                                                <option value='<?= $add_on_snap['title'] ?>' data-id="<?= $add_on_snap['id'] ?>" data-price="<?= $add_on_snap['price'] ?>" data-description="<?= $add_on_snap['description'] ?>" data-calories="<?= $add_on_snap['calories'] ?>"><?= $add_on_snap['title'] ?></option>
                                                         <?php }
                                                         } ?>
                                                     </select>
                                                 </div>
                                             </div>
+                                            <!-- Language Tabs for Add-On Title -->
                                             <div class="form-group ">
                                                 <label for="title" class="col-sm-3 col-form-label">Title <span class='text-danger text-sm'>*</span></label>
                                                 <div class="col-sm-12">
-                                                    <input type="text" class="form-control" id="add_on_title" placeholder="Add ON Title" name="title">
+                                                    <ul class="nav nav-tabs" id="addOnTitleTabs" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" id="addon-title-en-tab" data-toggle="tab" href="#addon-title-en" role="tab">English</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="addon-title-ar-tab" data-toggle="tab" href="#addon-title-ar" role="tab">Arabic</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="addon-title-he-tab" data-toggle="tab" href="#addon-title-he" role="tab">Hebrew</a>
+                                                        </li>
+                                                    </ul>
+                                                    <div class="tab-content mt-2" id="addOnTitleTabContent">
+                                                        <div class="tab-pane fade show active" id="addon-title-en" role="tabpanel">
+                                                            <input type="text" class="form-control" id="add_on_title" placeholder="Add On Title (English)" name="title">
+                                                            <input type="hidden" id="add_on_title_en" name="add_on_translations[en][title]" value="">
+                                                        </div>
+                                                        <div class="tab-pane fade" id="addon-title-ar" role="tabpanel">
+                                                            <input type="text" class="form-control" dir="rtl" placeholder="عنوان الإضافة (Arabic)" name="add_on_translations[ar][title]" id="add_on_title_ar" value="">
+                                                        </div>
+                                                        <div class="tab-pane fade" id="addon-title-he" role="tabpanel">
+                                                            <input type="text" class="form-control" dir="rtl" placeholder="כותרת התוספת (Hebrew)" name="add_on_translations[he][title]" id="add_on_title_he" value="">
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <!-- Language Tabs for Add-On Description -->
                                             <div class="form-group ">
                                                 <label for="description" class="col-sm-4 col-form-label">Short Description </label>
                                                 <div class="col-sm-12">
-                                                    <textarea type="text" class="form-control" id="add_on_description" placeholder="Add Ons Short Description" name="description"></textarea>
+                                                    <ul class="nav nav-tabs" id="addOnDescTabs" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" id="addon-desc-en-tab" data-toggle="tab" href="#addon-desc-en" role="tab">English</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="addon-desc-ar-tab" data-toggle="tab" href="#addon-desc-ar" role="tab">Arabic</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="addon-desc-he-tab" data-toggle="tab" href="#addon-desc-he" role="tab">Hebrew</a>
+                                                        </li>
+                                                    </ul>
+                                                    <div class="tab-content mt-2" id="addOnDescTabContent">
+                                                        <div class="tab-pane fade show active" id="addon-desc-en" role="tabpanel">
+                                                            <textarea type="text" class="form-control" id="add_on_description" placeholder="Add On Short Description (English)" name="description"></textarea>
+                                                            <input type="hidden" id="add_on_description_en" name="add_on_translations[en][description]" value="">
+                                                        </div>
+                                                        <div class="tab-pane fade" id="addon-desc-ar" role="tabpanel">
+                                                            <textarea type="text" class="form-control" dir="rtl" placeholder="وصف الإضافة (Arabic)" name="add_on_translations[ar][description]" id="add_on_description_ar"></textarea>
+                                                        </div>
+                                                        <div class="tab-pane fade" id="addon-desc-he" role="tabpanel">
+                                                            <textarea type="text" class="form-control" dir="rtl" placeholder="תיאור התוספת (Hebrew)" name="add_on_translations[he][description]" id="add_on_description_he"></textarea>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-group ">
@@ -708,6 +754,22 @@ $(document).ready(function() {
     $('#save-product').on('submit', function() {
         $('input[name="translations[en][name]"]').val($('input[name="pro_input_name"]').val());
         $('input[name="translations[en][short_description]"]').val($('textarea[name="short_description"]').val());
+    });
+    
+    // Sync Add-On English title field with main add-on title field
+    $('#add_on_title').on('input', function() {
+        $('#add_on_title_en').val($(this).val());
+    });
+    
+    // Sync Add-On English description field with main add-on description field
+    $('#add_on_description').on('input', function() {
+        $('#add_on_description_en').val($(this).val());
+    });
+    
+    // On add-on save/update, ensure English translations are synced
+    $(document).on('click', '#save_add_ons, #update_add_ons, #add_new_add_ons', function() {
+        $('#add_on_title_en').val($('#add_on_title').val());
+        $('#add_on_description_en').val($('#add_on_description').val());
     });
 });
 </script>

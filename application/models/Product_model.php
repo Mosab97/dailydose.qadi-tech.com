@@ -168,30 +168,48 @@ class Product_model extends CI_Model
 
         $add_ons = [];
         if (isset($data['product_add_ons']) && !empty($data['product_add_ons'])) {
-            foreach ($data['product_add_ons'] as $row) {
+            foreach ($data['product_add_ons'] as $add_on_index => $row) {
                 $tempRow = [];
                 $tempRow['title'] = $row['title'];
                 $tempRow['description'] = $row['description'];
                 $tempRow['price'] = $row['price'];
                 $tempRow['calories'] = $row['calories'];
                 $tempRow['status'] = $row['status'];
+                
+                // Store translations for this add-on
+                $translations = isset($row['translations']) ? $row['translations'] : [];
 
                 if (!isset($data['edit_product_id'])) {
                     // If it's a new product, associate each add-on with the corresponding product ID
                     for ($x = 0; $x < count($last_product_id); $x++) {
                         $tempRow['product_id'] = $last_product_id[$x];
-                        $add_ons[] = $tempRow;
+                        $add_ons[] = [
+                            'add_on_data' => $tempRow,
+                            'translations' => $translations // Store translations with each add-on instance
+                        ];
                     }
                 } else {
                     // If it's an edit operation, associate each add-on with the edit product ID
                     $tempRow['product_id'] = $data['edit_product_id'];
-                    $add_ons[] = $tempRow;
+                    $add_ons[] = [
+                        'add_on_data' => $tempRow,
+                        'translations' => $translations
+                    ];
                 }
             }
         }
 
         if (!empty($add_ons)) {
-            $this->db->insert_batch('product_add_ons', $add_ons);
+            // Insert add-ons one by one to get IDs for translation saving
+            foreach ($add_ons as $add_on_item) {
+                $this->db->insert('product_add_ons', $add_on_item['data']);
+                $add_on_id = $this->db->insert_id();
+                
+                // Save translations if available
+                if (!empty($add_on_item['translations'])) {
+                    $this->save_add_on_translations($add_on_id, $add_on_item['translations']);
+                }
+            }
         }
 
         $pro_attr_data = [

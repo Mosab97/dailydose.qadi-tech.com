@@ -57,10 +57,45 @@ class Product extends CI_Controller
             }
             $this->data['branch'] = fetch_details('', 'branch', 'id,branch_name');
 
-            // Get unique add-ons by title using DISTINCT instead of GROUP BY to avoid SQL mode issues
+            // Get unique add-ons with translations support
+            // Get current language dynamically from URL parameter, session, cookie, or default to 'en'
+            $language_code = 'en'; // Default language
+            
+            // Priority: URL parameter > Session > Cookie (googtrans) > Default
+            if (isset($_GET['lang']) && !empty($_GET['lang'])) {
+                $language_code = $this->input->get('lang', true);
+            } elseif (isset($_SESSION['admin_language']) && !empty($_SESSION['admin_language'])) {
+                $language_code = $_SESSION['admin_language'];
+            } elseif ($this->input->cookie('googtrans', true)) {
+                // Parse googtrans cookie format: /en/ar (Arabic) or /en/en (English)
+                $googtrans_value = $this->input->cookie('googtrans', true);
+                // Extract language code from format /en/ar -> ar, /en/en -> en
+                $parts = explode('/', trim($googtrans_value, '/'));
+                if (count($parts) >= 2) {
+                    $language_code = end($parts); // Get the last part (target language)
+                } elseif (count($parts) == 1 && !empty($parts[0])) {
+                    $language_code = $parts[0]; // Fallback if format is different
+                }
+            }
+            
+            // Validate language code exists in database, fallback to 'en' if invalid
+            $valid_languages = get_languages('', '', '', '');
+            $valid_codes = array_column($valid_languages, 'code');
+            if (!in_array($language_code, $valid_codes)) {
+                $language_code = 'en'; // Fallback to English
+            }
+            
+            // Escape language code for SQL security
+            $language_code = $this->db->escape_str($language_code);
+            
             $this->data['add_on_snaps'] = $this->db->distinct()
-                                                    ->select('title, id, description, price, status')
-                                                    ->from('product_add_ons')
+                                                    ->select('pao.id, pao.price, pao.status, pao.calories, 
+                                                             COALESCE(paot.title, pao.title) as title,
+                                                             COALESCE(paot.description, pao.description) as description')
+                                                    ->from('product_add_ons pao')
+                                                    ->join('product_add_on_translations paot', 
+                                                           "paot.add_on_id = pao.id AND paot.language_code = '{$language_code}'", 
+                                                           'LEFT')
                                                     ->order_by('title', 'ASC')
                                                     ->get()
                                                     ->result_array();
@@ -708,9 +743,11 @@ class Product extends CI_Controller
                     'price' => $this->input->post('price', true),
                     'calories' => $this->input->post('calories', true),
                 );
+                $add_on_id = null;
                 if (isset($_POST['add_on_id']) && !empty($_POST['add_on_id'])) {
                     // update add_ons
-                    if (update_details($data, ['id' => $this->input->post('add_on_id', true)], 'product_add_ons') == TRUE) {
+                    $add_on_id = $this->input->post('add_on_id', true);
+                    if (update_details($data, ['id' => $add_on_id], 'product_add_ons') == TRUE) {
                         $this->response['error'] = false;
                         $this->response['csrfName'] = $this->security->get_csrf_token_name();
                         $this->response['csrfHash'] = $this->security->get_csrf_hash();
@@ -725,6 +762,7 @@ class Product extends CI_Controller
                     if (!is_exist(['title' => $this->input->post('title', true), 'product_id' => $this->input->post('product_id', true)], 'product_add_ons', null)) {
                         // add new add_ons
                         if (insert_details($data, 'product_add_ons')) {
+                            $add_on_id = $this->db->insert_id();
                             $this->response['error'] = false;
                             $this->response['csrfName'] = $this->security->get_csrf_token_name();
                             $this->response['csrfHash'] = $this->security->get_csrf_hash();
@@ -742,8 +780,46 @@ class Product extends CI_Controller
                         $this->response['message'] = "Already have this add on.";
                     }
                 }
+                
+                // Save add-on translations if add-on was successfully saved/updated
+                if ($add_on_id && !$this->response['error'] && isset($_POST['add_on_translations']) && !empty($_POST['add_on_translations'])) {
+                    $translations = $this->input->post('add_on_translations', true);
+                    $this->product_model->save_add_on_translations($add_on_id, $translations);
+                }
                 print_r(json_encode($this->response));
             }
+        } else {
+            redirect('admin/login', 'refresh');
+        }
+    }
+
+    public function get_add_on_translations()
+    {
+        if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
+            $add_on_id = $this->input->get('add_on_id', true);
+            
+            if (empty($add_on_id)) {
+                $this->response['error'] = true;
+                $this->response['message'] = "Add On ID is required";
+                $this->response['data'] = [];
+            } else {
+                $translations = $this->product_model->get_add_on_translations($add_on_id);
+                
+                // Organize translations by language code
+                $organized_translations = [];
+                foreach ($translations as $translation) {
+                    $organized_translations[$translation['language_code']] = [
+                        'title' => $translation['title'],
+                        'description' => $translation['description']
+                    ];
+                }
+                
+                $this->response['error'] = false;
+                $this->response['message'] = "Translations retrieved successfully";
+                $this->response['data'] = $organized_translations;
+            }
+            
+            print_r(json_encode($this->response));
         } else {
             redirect('admin/login', 'refresh');
         }
