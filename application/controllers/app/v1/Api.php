@@ -1066,6 +1066,7 @@ class Api extends CI_Controller
         $this->form_validation->set_rules('offset', 'offset', 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('order', 'order', 'trim|xss_clean');
         $this->form_validation->set_rules('search', 'search', 'trim|xss_clean');
+        $this->form_validation->set_rules('language', 'Language', 'trim|xss_clean');
 
         if (!$this->form_validation->run()) {
             $this->response['error'] = true;
@@ -1079,9 +1080,20 @@ class Api extends CI_Controller
         $sort = (isset($_POST['sort(array)']) && !empty(trim($_POST['sort']))) ? $this->input->post('sort', true) : 'row_order';
         $order = (isset($_POST['order']) && !empty(trim($_POST['order']))) ? $this->input->post('order', true) : 'ASC';
         $search = (isset($_POST['search']) && !empty(trim($_POST['search']))) ? $this->input->post('search', true) : null;
+        
+        // Get language parameter (defaults to 'en')
+        $language = (isset($_POST['language']) && !empty(trim($_POST['language']))) ? $this->input->post('language', true) : 'en';
+        
+        // Validate language code exists in database
+        $valid_languages = get_languages('', '', '', '');
+        $valid_codes = array_column($valid_languages, 'code');
+        if (!in_array($language, $valid_codes)) {
+            $language = 'en'; // Fallback to English
+        }
+        
         $this->response['message'] = "Cateogry(s) retrieved successfully!";
         $id = (!empty($_POST['id']) && isset($_POST['id'])) ? $_POST['id'] : '';
-        $cat_res = $this->category_model->get_categories($id, $limit, $offset, $sort, $order, "true", "", "", $search, 'true');
+        $cat_res = $this->category_model->get_categories($id, $limit, $offset, $sort, $order, "true", "", "", $search, 'true', $language);
 
         for ($i = 0; $i < count($cat_res); $i++) {
 
@@ -1090,7 +1102,7 @@ class Api extends CI_Controller
         }
 
 
-        $popular_categories = $this->category_model->get_categories(NULL, "", "", 'clicks', 'DESC', 'true', "", "", "");
+        $popular_categories = $this->category_model->get_categories(NULL, "", "", 'clicks', 'DESC', 'true', "", "", "", "", $language);
 
         $this->response['error'] = (empty($cat_res)) ? true : false;
         $this->response['total'] = !empty($cat_res) ? $cat_res[0]['total'] : 0;

@@ -84,7 +84,7 @@ class Category_model extends CI_Model
     //     return json_decode(json_encode($categories), 1);
     // }
 
-    public function get_categories($id = NULL, $limit = NULL, $offset = NULL, $sort = 'row_order', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '', $search = '', $from_app = 'false')
+    public function get_categories($id = NULL, $limit = NULL, $offset = NULL, $sort = 'row_order', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '', $search = '', $from_app = 'false', $language_code = 'en')
     {
         $level = 0;
         $session_branch_id = $this->session->userdata('branch_id');
@@ -102,7 +102,10 @@ class Category_model extends CI_Model
             $where = (isset($id) && !empty($id)) ? ['c1.id' => $id, 'c1.status' => 1] : ['c1.parent_id' => 0, 'c1.status' => 1];
         }
 
-        $this->db->select('c1.*');
+        // Escape language code for SQL security
+        $language_code = $this->db->escape_str($language_code);
+        
+        $this->db->select('c1.*, COALESCE(ct.name, c1.name) as name');
         if (isset($multipleWhere) && !empty($multipleWhere)) {
             $this->db->group_start();
             $this->db->or_like($multipleWhere);
@@ -110,6 +113,11 @@ class Category_model extends CI_Model
         }
         $this->db->where($where);
         $this->db->where("FIND_IN_SET('$branch_id', c1.branch_id) > 0");
+
+        // LEFT JOIN with category_translations table for translations
+        $this->db->join('category_translations ct', 
+                       "ct.category_id = c1.id AND ct.language_code = '{$language_code}'", 
+                       'LEFT');
 
         // Join with products table to ensure categories have active products
         if($from_app == 'true'){
@@ -147,7 +155,7 @@ class Category_model extends CI_Model
 
         $i = 0;
         foreach ($categories as $p_cat) {
-            $categories[$i]->children = $this->sub_categories($p_cat->id, $level);
+            $categories[$i]->children = $this->sub_categories($p_cat->id, $level, $language_code);
             $categories[$i]->text = output_escaping(str_replace('\r\n', "\n", $p_cat->name));
             $categories[$i]->name = output_escaping(str_replace('\r\n', "\n", $categories[$i]->name));
             $categories[$i]->state = ['opened' => true];
@@ -164,18 +172,24 @@ class Category_model extends CI_Model
         return json_decode(json_encode($categories), 1);
     }
 
-    public function sub_categories($id, $level)
+    public function sub_categories($id, $level, $language_code = 'en')
     {
         $level = $level + 1;
-        $this->db->select('c1.*');
+        // Escape language code for SQL security
+        $language_code = $this->db->escape_str($language_code);
+        
+        $this->db->select('c1.*, COALESCE(ct.name, c1.name) as name');
         $this->db->from('categories c1');
+        $this->db->join('category_translations ct', 
+                       "ct.category_id = c1.id AND ct.language_code = '{$language_code}'", 
+                       'LEFT');
         $this->db->where(['c1.parent_id' => $id, 'c1.status' => 1]);
         $child = $this->db->get();
         $categories = $child->result();
         $i = 0;
         foreach ($categories as $p_cat) {
 
-            $categories[$i]->children = $this->sub_categories($p_cat->id, $level);
+            $categories[$i]->children = $this->sub_categories($p_cat->id, $level, $language_code);
             $categories[$i]->text = output_escaping($p_cat->name);
             $categories[$i]->state = ['opened' => true];
             $categories[$i]->level = $level;
@@ -370,13 +384,15 @@ class Category_model extends CI_Model
         }
     }
 
-    public function get_categories_branch_wise($id = NULL, $limit = '', $offset = '', $sort = 'row_order', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '')
+    public function get_categories_branch_wise($id = NULL, $limit = '', $offset = '', $sort = 'row_order', $order = 'ASC', $has_child_or_item = 'true', $slug = '', $ignore_status = '', $language_code = 'en')
     {
         $level = 0;
         $session_branch_id = $this->session->userdata('branch_id');
         $branch_id = (isset($session_branch_id) && !empty($session_branch_id)) ? $session_branch_id : $_POST['branch_id'];
         $api_branch_id = isset($_POST['branch_id']) ? $_POST['branch_id'] : '';
 
+        // Escape language code for SQL security
+        $language_code = $this->db->escape_str($language_code);
 
         if ($ignore_status == 1) {
             $where = (isset($id) && !empty($id)) ? ['c1.id' => $id] : ['c1.parent_id' => 0];
@@ -384,8 +400,14 @@ class Category_model extends CI_Model
             $where = (isset($id) && !empty($id)) ? ['c1.id' => $id, 'c1.status' => 1] : ['c1.parent_id' => 0];
         }
 
-        $this->db->select('c1.*');
+        $this->db->select('c1.*, COALESCE(ct.name, c1.name) as name');
         $this->db->where($where);
+        
+        // LEFT JOIN with category_translations table for translations
+        $this->db->join('category_translations ct', 
+                       "ct.category_id = c1.id AND ct.language_code = '{$language_code}'", 
+                       'LEFT');
+        
         // $this->db->where("FIND_IN_SET('$branch_id', c1.branch_id) > 0");
         if (!empty($api_branch_id)) {
             $this->db->where("FIND_IN_SET('$api_branch_id', c1.branch_id) > 0");
@@ -427,7 +449,7 @@ class Category_model extends CI_Model
 
         foreach ($categories as $p_cat) {
 
-            $categories[$i]->children = $this->sub_categories($p_cat->id, $level);
+            $categories[$i]->children = $this->sub_categories($p_cat->id, $level, $language_code);
             $categories[$i]->text = output_escaping(str_replace('\r\n', '&#13;&#10;', $p_cat->name));
             $categories[$i]->name = output_escaping(str_replace('\r\n', '&#13;&#10;', $categories[$i]->name));
             $categories[$i]->state = ['opened' => true];
@@ -441,5 +463,81 @@ class Category_model extends CI_Model
         }
 
         return json_decode(json_encode($categories), 1);
+    }
+
+    /**
+     * Save category translations for a given category
+     * @param int $category_id - Category ID
+     * @param array $translations - Array of translations with language codes as keys
+     *                              Example: ['en' => ['name' => '...'], 'ar' => ['name' => '...']]
+     * @return bool
+     */
+    public function save_category_translations($category_id, $translations)
+    {
+        if (empty($category_id) || empty($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            if (empty($translation_data['name'])) {
+                continue; // Skip if name is empty
+            }
+
+            $data = [
+                'category_id' => $category_id,
+                'language_code' => $language_code,
+                'name' => $translation_data['name'],
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('category_id', $category_id)
+                                 ->where('language_code', $language_code)
+                                 ->get('category_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('category_translations', [
+                             'name' => $data['name'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('category_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get category translations
+     * @param int $category_id - Category ID
+     * @param string $language_code - Optional language code to get specific translation
+     * @return array
+     */
+    public function get_category_translations($category_id, $language_code = null)
+    {
+        if (empty($category_id)) {
+            return [];
+        }
+
+        $this->db->where('category_id', $category_id);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('category_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'name' => $row['name'],
+            ];
+        }
+
+        return $formatted;
     }
 }

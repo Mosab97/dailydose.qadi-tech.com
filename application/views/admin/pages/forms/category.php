@@ -30,13 +30,36 @@
                                 <input type="hidden" name="edit_category" value="<?= @$fetched_data[0]['id'] ?>">
                             <?php } ?>
                             <div class="card-body">
+                                <!-- Language Tabs for Category Name -->
                                 <div class="form-group row">
                                     <label for="category_input_name" class="col-sm-2 col-form-label">Name <span
                                             class='text-danger text-sm'>*</span></label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control" id="category_input_name"
-                                            placeholder="Category Name" name="category_input_name"
-                                            value="<?= isset($fetched_data[0]['name']) ? output_escaping($fetched_data[0]['name']) : "" ?>">
+                                        <ul class="nav nav-tabs" id="categoryNameTabs" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="category-name-en-tab" data-toggle="tab" href="#category-name-en" role="tab">English</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="category-name-ar-tab" data-toggle="tab" href="#category-name-ar" role="tab">Arabic</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="category-name-he-tab" data-toggle="tab" href="#category-name-he" role="tab">Hebrew</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content mt-2" id="categoryNameTabContent">
+                                            <div class="tab-pane fade show active" id="category-name-en" role="tabpanel">
+                                                <input type="text" class="form-control" id="category_input_name"
+                                                    placeholder="Category Name (English)" name="category_input_name"
+                                                    value="<?= isset($fetched_data[0]['name']) ? output_escaping($fetched_data[0]['name']) : "" ?>">
+                                                <input type="hidden" id="category_name_en" name="category_translations[en][name]" value="<?= isset($category_translations['en']['name']) ? output_escaping($category_translations['en']['name']) : (isset($fetched_data[0]['name']) ? output_escaping($fetched_data[0]['name']) : '') ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="category-name-ar" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="اسم الفئة (Arabic)" name="category_translations[ar][name]" id="category_name_ar" value="<?= isset($category_translations['ar']['name']) ? output_escaping($category_translations['ar']['name']) : '' ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="category-name-he" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="שם הקטגוריה (Hebrew)" name="category_translations[he][name]" id="category_name_he" value="<?= isset($category_translations['he']['name']) ? output_escaping($category_translations['he']['name']) : '' ?>">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <?php if (!isset($fetched_data[0]['id']) && empty($fetched_data[0]['id'])) { ?>

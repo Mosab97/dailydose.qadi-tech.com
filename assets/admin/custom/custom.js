@@ -9096,8 +9096,28 @@ $(document).on("click", "button[type='reset']", function (e) {
     // Optionally reset date fields if you want them blank instead of original
     $("#start_date, #end_date").val("");
 
-    // (Optional) Reset file upload preview if you’re using modal upload
+    // (Optional) Reset file upload preview if you're using modal upload
     $(".uploadFile").text("Upload Photo");
+});
+
+// Sync Category English name field with main category name field
+$(document).on('input', '#category_input_name', function() {
+    $('#category_name_en').val($(this).val());
+});
+
+// On category form submission, ensure English translations are synced
+$(document).on('submit', '#add_product_form', function() {
+    // Only sync if this is the category form (check if category_input_name exists)
+    if ($('#category_input_name').length) {
+        $('#category_name_en').val($('#category_input_name').val());
+    }
+});
+
+// Also sync on button click for category form
+$(document).on('click', '.category-submit', function() {
+    if ($('#category_input_name').length) {
+        $('#category_name_en').val($('#category_input_name').val());
+    }
 });
 
 

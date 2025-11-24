@@ -68,13 +68,44 @@ class Category extends CI_Controller
             if (!has_permissions('read', 'branch')) {
                 $this->data['permissions_message'] = PERMISSION_ERROR_MSG;
             }
+            
+            // Get current language dynamically from URL parameter, session, cookie, or default to 'en'
+            $language_code = 'en'; // Default language
+            
+            // Priority: URL parameter > Session > Cookie (googtrans) > Default
+            if (isset($_GET['lang']) && !empty($_GET['lang'])) {
+                $language_code = $this->input->get('lang', true);
+            } elseif (isset($_SESSION['admin_language']) && !empty($_SESSION['admin_language'])) {
+                $language_code = $_SESSION['admin_language'];
+            } elseif ($this->input->cookie('googtrans', true)) {
+                // Parse googtrans cookie format: /en/ar (Arabic) or /en/en (English)
+                $googtrans_value = $this->input->cookie('googtrans', true);
+                $parts = explode('/', trim($googtrans_value, '/'));
+                if (count($parts) >= 2) {
+                    $language_code = end($parts); // Get the last part (target language)
+                } elseif (count($parts) == 1 && !empty($parts[0])) {
+                    $language_code = $parts[0]; // Fallback if format is different
+                }
+            }
+            
+            // Validate language code exists in database, fallback to 'en' if invalid
+            $valid_languages = get_languages('', '', '', '');
+            $valid_codes = array_column($valid_languages, 'code');
+            if (!in_array($language_code, $valid_codes)) {
+                $language_code = 'en'; // Fallback to English
+            }
+            
             if (isset($_GET['edit_id']) && !empty($_GET['edit_id'])) {
                 $edit_category = fetch_details(['id' => $_GET['edit_id']], 'categories');
                 if ($edit_category[0]['branch_id'] == $_SESSION['branch_id']) {
                     $this->data['fetched_data'] = fetch_details(['id' => $_GET['edit_id']], 'categories');
+                    // Load existing translations when editing
+                    $this->data['category_translations'] = $this->category_model->get_category_translations($_GET['edit_id']);
                 } else {
                     redirect('admin/category/', 'refresh');
                 }
+            } else {
+                $this->data['category_translations'] = [];
             }
             $this->data['categories'] = $this->category_model->get_categories();
             $this->data['branch'] = fetch_details('', 'branch', 'id,branch_name');
@@ -234,15 +265,33 @@ class Category extends CI_Controller
                     }
                 }
 
-                $this->category_model->add_category($_POST);
+                $category_result = $this->category_model->add_category($_POST);
                 $this->response['error'] = false;
                 $this->response['csrfName'] = $this->security->get_csrf_token_name();
                 $this->response['csrfHash'] = $this->security->get_csrf_hash();
+                
+                // Save category translations if provided
+                if (isset($_POST['category_translations']) && !empty($_POST['category_translations'])) {
+                    $translations = $this->input->post('category_translations', true);
+                    
+                    if (isset($_POST['edit_category']) && !empty($_POST['edit_category'])) {
+                        // Update existing category - save translations for single category
+                        $category_id = $_POST['edit_category'];
+                        $this->category_model->save_category_translations($category_id, $translations);
+                    } else {
+                        // New category - save translations for all branch-specific categories
+                        if (is_array($category_result) && !empty($category_result)) {
+                            foreach ($category_result as $category_id) {
+                                $this->category_model->save_category_translations($category_id, $translations);
+                            }
+                        }
+                    }
+                }
+                
                 $message = (isset($_POST['edit_category'])) ? 'Category Updated Successfully' : 'Category Added Successfully';
                 $this->response['message'] = $message;
                 $this->response['location'] = base_url('admin/category');
                 print_r(json_encode($this->response));
-                redirect('admin/category/', 'refresh');
             }
         } else {
             redirect('admin/login', 'refresh');
