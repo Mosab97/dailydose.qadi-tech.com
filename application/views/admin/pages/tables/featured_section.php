@@ -29,16 +29,85 @@
                                 <input type="hidden" id="update_id" name="update_id" value="1">
                             <?php } ?>
                             <div class="card-body">
+                                <!-- Language Tabs for Title -->
                                 <div class="form-group row">
                                     <label for="title" class="control-label col">Title for section <span class='text-danger text-sm'>*</span></label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" name="title" value="<?= (isset($fetched_data[0]['title']) ? $fetched_data[0]['title'] : '') ?>" placeholder="Title">
+                                        <?php 
+                                        // Use unique IDs for modal context when edit_id is present (modal edit mode)
+                                        // For modal: use modal- prefix, for main page: use regular IDs
+                                        $is_edit_mode = isset($_GET['edit_id']) && !empty($_GET['edit_id']);
+                                        $title_tabs_id = $is_edit_mode ? 'modal-sectionTitleTabs' : 'sectionTitleTabs';
+                                        $title_tab_content_id = $is_edit_mode ? 'modal-sectionTitleTabContent' : 'sectionTitleTabContent';
+                                        $title_en_tab_id = $is_edit_mode ? 'modal-section-title-en-tab' : 'section-title-en-tab';
+                                        $title_en_pane_id = $is_edit_mode ? 'modal-section-title-en' : 'section-title-en';
+                                        $title_ar_tab_id = $is_edit_mode ? 'modal-section-title-ar-tab' : 'section-title-ar-tab';
+                                        $title_ar_pane_id = $is_edit_mode ? 'modal-section-title-ar' : 'section-title-ar';
+                                        $title_he_tab_id = $is_edit_mode ? 'modal-section-title-he-tab' : 'section-title-he-tab';
+                                        $title_he_pane_id = $is_edit_mode ? 'modal-section-title-he' : 'section-title-he';
+                                        ?>
+                                        <ul class="nav nav-tabs" id="<?= $title_tabs_id ?>" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="<?= $title_en_tab_id ?>" data-toggle="tab" href="#<?= $title_en_pane_id ?>" role="tab">English</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="<?= $title_ar_tab_id ?>" data-toggle="tab" href="#<?= $title_ar_pane_id ?>" role="tab">Arabic</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="<?= $title_he_tab_id ?>" data-toggle="tab" href="#<?= $title_he_pane_id ?>" role="tab">Hebrew</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content mt-2" id="<?= $title_tab_content_id ?>">
+                                            <div class="tab-pane fade show active" id="<?= $title_en_pane_id ?>" role="tabpanel">
+                                                <input type="text" class="form-control" id="section_title" placeholder="Section Title (English)" name="title" value="<?= isset($section_translations['en']['title']) ? $section_translations['en']['title'] : (isset($fetched_data[0]['title']) ? $fetched_data[0]['title'] : '') ?>">
+                                                <input type="hidden" id="section_title_en" name="section_translations[en][title]" value="<?= isset($section_translations['en']['title']) ? $section_translations['en']['title'] : (isset($fetched_data[0]['title']) ? $fetched_data[0]['title'] : '') ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="<?= $title_ar_pane_id ?>" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="عنوان القسم (Arabic)" name="section_translations[ar][title]" id="section_title_ar" value="<?= isset($section_translations['ar']['title']) ? $section_translations['ar']['title'] : '' ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="<?= $title_he_pane_id ?>" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="כותרת הסעיף (Hebrew)" name="section_translations[he][title]" id="section_title_he" value="<?= isset($section_translations['he']['title']) ? $section_translations['he']['title'] : '' ?>">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <!-- Language Tabs for Short Description -->
                                 <div class="form-group row">
                                     <label for="short_description" class="control-label col">Short description <span class='text-danger text-sm'>*</span></label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" name="short_description" id="short_description" value="<?= (isset($fetched_data[0]['short_description']) ? $fetched_data[0]['short_description'] : '') ?>" placeholder="Short description">
+                                        <?php 
+                                        $desc_tabs_id = $is_edit_mode ? 'modal-sectionDescTabs' : 'sectionDescTabs';
+                                        $desc_tab_content_id = $is_edit_mode ? 'modal-sectionDescTabContent' : 'sectionDescTabContent';
+                                        $desc_en_tab_id = $is_edit_mode ? 'modal-section-desc-en-tab' : 'section-desc-en-tab';
+                                        $desc_en_pane_id = $is_edit_mode ? 'modal-section-desc-en' : 'section-desc-en';
+                                        $desc_ar_tab_id = $is_edit_mode ? 'modal-section-desc-ar-tab' : 'section-desc-ar-tab';
+                                        $desc_ar_pane_id = $is_edit_mode ? 'modal-section-desc-ar' : 'section-desc-ar';
+                                        $desc_he_tab_id = $is_edit_mode ? 'modal-section-desc-he-tab' : 'section-desc-he-tab';
+                                        $desc_he_pane_id = $is_edit_mode ? 'modal-section-desc-he' : 'section-desc-he';
+                                        ?>
+                                        <ul class="nav nav-tabs" id="<?= $desc_tabs_id ?>" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="<?= $desc_en_tab_id ?>" data-toggle="tab" href="#<?= $desc_en_pane_id ?>" role="tab">English</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="<?= $desc_ar_tab_id ?>" data-toggle="tab" href="#<?= $desc_ar_pane_id ?>" role="tab">Arabic</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="<?= $desc_he_tab_id ?>" data-toggle="tab" href="#<?= $desc_he_pane_id ?>" role="tab">Hebrew</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content mt-2" id="<?= $desc_tab_content_id ?>">
+                                            <div class="tab-pane fade show active" id="<?= $desc_en_pane_id ?>" role="tabpanel">
+                                                <input type="text" class="form-control" id="section_short_description" placeholder="Short Description (English)" name="short_description" value="<?= isset($section_translations['en']['short_description']) ? $section_translations['en']['short_description'] : (isset($fetched_data[0]['short_description']) ? $fetched_data[0]['short_description'] : '') ?>">
+                                                <input type="hidden" id="section_short_description_en" name="section_translations[en][short_description]" value="<?= isset($section_translations['en']['short_description']) ? $section_translations['en']['short_description'] : (isset($fetched_data[0]['short_description']) ? $fetched_data[0]['short_description'] : '') ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="<?= $desc_ar_pane_id ?>" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="وصف قصير (Arabic)" name="section_translations[ar][short_description]" id="section_short_description_ar" value="<?= isset($section_translations['ar']['short_description']) ? $section_translations['ar']['short_description'] : '' ?>">
+                                            </div>
+                                            <div class="tab-pane fade" id="<?= $desc_he_pane_id ?>" role="tabpanel">
+                                                <input type="text" class="form-control" dir="rtl" placeholder="תיאור קצר (Hebrew)" name="section_translations[he][short_description]" id="section_short_description_he" value="<?= isset($section_translations['he']['short_description']) ? $section_translations['he']['short_description'] : '' ?>">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

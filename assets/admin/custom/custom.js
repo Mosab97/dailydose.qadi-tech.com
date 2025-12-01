@@ -1687,12 +1687,75 @@ $(document).on("click", ".edit_btn", function () {
         searchable_branch();
         searchable_zipcodes();
         search_category();
+        
+        // Scope tab functionality to modal container to prevent conflicts with main page tabs
+        var $modalBody = $(".edit-modal-lg .modal-body");
+        
+        // Re-initialize Bootstrap tabs within modal scope
+        $modalBody.find('[data-toggle="tab"]').on('click', function(e) {
+          e.preventDefault();
+          var target = $(this).attr('href');
+          // Only activate tabs within the modal
+          $modalBody.find('.nav-tabs .nav-link').removeClass('active');
+          $modalBody.find('.tab-pane').removeClass('show active');
+          $(this).addClass('active');
+          $modalBody.find(target).addClass('show active');
+        });
+        
+        // Initialize Featured Section translation fields after modal loads
+        // Use a longer timeout to ensure all content is loaded
+        setTimeout(function () {
+          // Sync English translation fields for Featured Sections (scoped to modal)
+          var $modalSectionTitle = $modalBody.find("#section_title");
+          var $modalSectionTitleEn = $modalBody.find("#section_title_en");
+          
+          if ($modalSectionTitle.length && $modalSectionTitleEn.length) {
+            var titleVal = $modalSectionTitle.val();
+            if (titleVal) {
+              // Update hidden English field
+              $modalSectionTitleEn.val(titleVal);
+            } else {
+              // If main field is empty, try to get from hidden field
+              var hiddenTitle = $modalSectionTitleEn.val();
+              if (hiddenTitle) {
+                $modalSectionTitle.val(hiddenTitle);
+              }
+            }
+          }
+          
+          var $modalSectionDesc = $modalBody.find("#section_short_description");
+          var $modalSectionDescEn = $modalBody.find("#section_short_description_en");
+          
+          if ($modalSectionDesc.length && $modalSectionDescEn.length) {
+            var descVal = $modalSectionDesc.val();
+            if (descVal) {
+              // Update hidden English field
+              $modalSectionDescEn.val(descVal);
+            } else {
+              // If main field is empty, try to get from hidden field
+              var hiddenDesc = $modalSectionDescEn.val();
+              if (hiddenDesc) {
+                $modalSectionDesc.val(hiddenDesc);
+              }
+            }
+          }
+          
+          // Re-bind input handlers for translation sync (scoped to modal, remove old handlers first)
+          $modalBody.find("#section_title").off("input.section-translation-modal").on("input.section-translation-modal", function() {
+            $modalBody.find("#section_title_en").val($(this).val());
+          });
+          
+          $modalBody.find("#section_short_description").off("input.section-translation-modal").on("input.section-translation-modal", function() {
+            $modalBody.find("#section_short_description_en").val($(this).val());
+          });
+        }, 300);
+        
         setTimeout(function () {
           $(".edit-modal-lg").unblock();
         }, 2000);
       }
     );
-});
+  });
 
 function searchable_tags() {
   var search_tags = $(".search_tags").select2({
@@ -1902,6 +1965,19 @@ $(document).on("submit", ".container-fluid .form-submit-event", function (e) {
     // Sync English field - form fields will be sent automatically, no need to append JSON
     var name_en = $("#attribute_name").val();
     $("#attribute_name_en").val(name_en);
+  }
+  
+  // Sync English section translation fields if this is a featured section form
+  if ($("#section_title").length) {
+    // Sync section title English field
+    var section_title_en = $("#section_title").val();
+    $("#section_title_en").val(section_title_en);
+  }
+  
+  if ($("#section_short_description").length) {
+    // Sync section short description English field
+    var section_desc_en = $("#section_short_description").val();
+    $("#section_short_description_en").val(section_desc_en);
   }
   
   formData.append(csrfName, csrfHash);
@@ -3880,6 +3956,33 @@ $(document).on("click", "#delete-featured-section", function () {
       Swal.fire("Cancelled!", "Your data is  safe.", "error");
     }
   });
+});
+
+// Sync Featured Section English title field with main title field
+$(document).on("input", "#section_title", function() {
+  $("#section_title_en").val($(this).val());
+});
+
+// Sync Featured Section English short description field with main short description field
+$(document).on("input", "#section_short_description", function() {
+  $("#section_short_description_en").val($(this).val());
+});
+
+// Initialize English translation fields on page load (for edit mode)
+$(document).ready(function() {
+  if ($("#section_title").length && $("#section_title_en").length) {
+    var titleVal = $("#section_title").val();
+    if (titleVal && !$("#section_title_en").val()) {
+      $("#section_title_en").val(titleVal);
+    }
+  }
+  
+  if ($("#section_short_description").length && $("#section_short_description_en").length) {
+    var descVal = $("#section_short_description").val();
+    if (descVal && !$("#section_short_description_en").val()) {
+      $("#section_short_description_en").val(descVal);
+    }
+  }
 });
 
 //6.Notifation-Module

@@ -2842,6 +2842,7 @@ class Api extends CI_Controller
                 filter_by:p.id|sd.user_id       // {p.id = product list | sd.user_id = partner list}{ default - p.id } {optional}
                 latitude:123                 // {optional}
                 longitude:123                // {optional}
+                language:en            // { default - en } {optional} - Language code (en, ar, he)
 
             */
 
@@ -2857,6 +2858,7 @@ class Api extends CI_Controller
         $this->form_validation->set_rules('p_order', 'Product Order', 'trim|xss_clean');
         $this->form_validation->set_rules('filter_by', ' filter_by ', 'trim|xss_clean');
         $this->form_validation->set_rules('city_id', ' City Id ', 'trim|xss_clean');
+        $this->form_validation->set_rules('language', 'Language', 'trim|xss_clean');
 
         if (!$this->form_validation->run()) {
             $this->response['error'] = true;
@@ -2878,18 +2880,49 @@ class Api extends CI_Controller
         $p_order = (isset($_POST['p_order']) && !empty(trim($_POST['p_order']))) ? $_POST['p_order'] : 'DESC';
         $p_sort = (isset($_POST['p_sort']) && !empty(trim($_POST['p_sort']))) ? $_POST['p_sort'] : 'p.id';
         $filter_by = (isset($_POST['filter_by']) && !empty($_POST['filter_by'])) ? $this->input->post("filter_by", true) : 'p.id';
+        
+        // Get language parameter, default to 'en'
+        $language_code = (isset($_POST['language']) && !empty(trim($_POST['language']))) ? $this->input->post('language', true) : 'en';
+        $language_code = $this->db->escape_str($language_code);
 
-        $this->db->select('*')->where('branch_id', $_POST['branch_id']);
+        // Query sections with translations using LEFT JOIN
+        // Prioritize translations table for all languages including English
+        // Fallback to main table only if translation doesn't exist (for backward compatibility)
+        $this->db->select('s.*, st.title as translated_title, st.short_description as translated_short_description');
+        $this->db->from('sections s');
+        $this->db->join('section_translations st', "st.section_id = s.id AND st.language_code = '{$language_code}'", 'LEFT');
+        $this->db->where('s.branch_id', $_POST['branch_id']);
         if (isset($_POST['section_id']) && !empty($_POST['section_id'])) {
-            $this->db->where('id', $section_id);
-            $this->db->where('branch_id', $_POST['branch_id']);
+            $this->db->where('s.id', $section_id);
         }
         if (isset($_POST['section_slug']) && !empty($_POST['section_slug'])) {
-            $this->db->where('slug', $section_slug);
-            $this->db->where('branch_id', $_POST['branch_id']);
+            $this->db->where('s.slug', $section_slug);
         }
         $this->db->limit($limit, $offset);
-        $sections = $this->db->order_by('row_order')->get('sections')->result_array();
+        $sections = $this->db->order_by('s.row_order')->get()->result_array();
+        
+        // Process sections to use translations when available, fallback to English or main table
+        for ($i = 0; $i < count($sections); $i++) {
+            // Use translation if available, otherwise try English translation, then fallback to main table
+            if (!empty($sections[$i]['translated_title'])) {
+                $sections[$i]['title'] = $sections[$i]['translated_title'];
+                $sections[$i]['short_description'] = !empty($sections[$i]['translated_short_description']) ? $sections[$i]['translated_short_description'] : $sections[$i]['short_description'];
+            } elseif ($language_code != 'en') {
+                // If requested language is not English and no translation exists, try English translation
+                $english_translation = $this->db->where('section_id', $sections[$i]['id'])
+                                                 ->where('language_code', 'en')
+                                                 ->get('section_translations')
+                                                 ->row_array();
+                if (!empty($english_translation['title'])) {
+                    $sections[$i]['title'] = $english_translation['title'];
+                    $sections[$i]['short_description'] = !empty($english_translation['short_description']) ? $english_translation['short_description'] : $sections[$i]['short_description'];
+                }
+                // Otherwise, keep main table values (backward compatibility)
+            }
+            // Remove temporary translation fields
+            unset($sections[$i]['translated_title']);
+            unset($sections[$i]['translated_short_description']);
+        }
 
         if (!empty($sections)) {
             for ($i = 0; $i < count($sections); $i++) {
@@ -2904,6 +2937,7 @@ class Api extends CI_Controller
                     }
                 }
                 $filters['branch_id'] = (isset($_POST['branch_id']) && !empty($_POST['branch_id'])) ? $this->input->post("branch_id", true) : 0;
+                $filters['language'] = $language_code; // Add language to filters for product translations
                 $filters['longitude'] = (isset($_POST['longitude']) && !empty($_POST['longitude'])) ? $this->input->post("longitude", true) : 0;
                 $filters['latitude'] = (isset($_POST['latitude']) && !empty($_POST['latitude'])) ? $this->input->post("latitude", true) : 0;
                 $filters['city_id'] = (isset($_POST['city_id']) && !empty($_POST['city_id'])) ? $this->input->post("city_id", true) : 0;

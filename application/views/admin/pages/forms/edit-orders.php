@@ -27,8 +27,7 @@
                     <section class="time-line-box text-center">
                         <div class="swiper-wrapper col-12">
                             <?php
-
-
+                            // Hide out_for_delivery status by skipping it in the loop
                             $status = json_decode($order_detls[0]['status']);
                             
                             $status_wise_class = [
@@ -42,10 +41,14 @@
                                 'cancelled' => ['fa fa-xs fa-times-circle ', 'bg-red'],
                             ];
                             foreach ($status as $row) {
+                                // Skip out_for_delivery
+                                if ($row[0] === 'out_for_delivery') {
+                                    continue;
+                                }
                             ?>
                                 <div class="swiper-slide">
                                     <div class="max-auto col-md-6 offset-md-3">
-                                        <div class="<?= $status_wise_class[$row[0]][1] ?> pt-2 pb-2 rounded"> <span
+                                        <div class="<?= isset($status_wise_class[$row[0]][1]) ? $status_wise_class[$row[0]][1] : '' ?> pt-2 pb-2 rounded"> <span
                                                 class="fa-lg"><i class="<?= $status_wise_class[$row[0]][0] ?>"></i></span>
                                         </div>
                                     </div>
@@ -239,11 +242,11 @@
                                                 </div>
                                                 <div class="card-footer p-0">
                                                     <ul class="nav flex-column">
-                                                        <li class="nav-item">
+                                                        <!-- <li class="nav-item">
                                                             <a href="javascript:void(0)"
                                                                 class="nav-link text-info">Payment Method<span
                                                                     class="float-right text-info"><?= $order_detls[0]['payment_method']; ?></span></a>
-                                                        </li>
+                                                        </li> -->
                                                         <li class="nav-item">
                                                             <a href="javascript:void(0)"
                                                                 class="nav-link text-info">Total(<?= $settings['currency'] ?>)<span
@@ -361,8 +364,8 @@
                                                                 <?= (isset($order_detls[0]['active_status']) && $order_detls[0]['active_status'] == 'preparing') ? 'selected' : '' ?>>Preparing</option>
                                                             <option value="ready_for_pickup"
                                                                 <?= (isset($order_detls[0]['active_status']) && $order_detls[0]['active_status'] == 'ready_for_pickup') ? 'selected' : '' ?>>Ready For Pickup</option>
-                                                            <option value="out_for_delivery"
-                                                                <?= (isset($order_detls[0]['active_status']) && $order_detls[0]['active_status'] == 'out_for_delivery') ? 'selected' : '' ?>>Out For Delivery</option>
+                                                            <!-- <option value="out_for_delivery"
+                                                                <?= (isset($order_detls[0]['active_status']) && $order_detls[0]['active_status'] == 'out_for_delivery') ? 'selected' : '' ?>>Out For Delivery</option> -->
                                                             <option value="delivered"
                                                                 <?= (isset($order_detls[0]['active_status']) && $order_detls[0]['active_status'] == 'delivered') ? 'selected' : '' ?>>Delivered</option>
                                                             <option value="cancelled"

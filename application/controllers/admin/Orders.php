@@ -137,10 +137,10 @@ class Orders extends CI_Controller
             if (isset($_POST['val']) && !empty($_POST['val']) && $_POST['val'] == 'cancelled') {
                 $this->form_validation->set_rules('reason', 'reason', 'trim|required|xss_clean');
             }
-            if (isset($_POST['is_self_pick_up']) && !empty($_POST['is_self_pick_up']) && $_POST['val'] != 'cancelled') {
-                $this->form_validation->set_rules('owner_note', 'owner_note', 'trim|xss_clean');
-                $this->form_validation->set_rules('self_pickup_time', 'Self Pickup Time', 'trim|required|xss_clean');
-            }
+            // if (isset($_POST['is_self_pick_up']) && !empty($_POST['is_self_pick_up']) && $_POST['val'] != 'cancelled') {
+            //     $this->form_validation->set_rules('owner_note', 'owner_note', 'trim|xss_clean');
+            //     $this->form_validation->set_rules('self_pickup_time', 'Self Pickup Time', 'trim|required|xss_clean');
+            // }
 
             if (!$this->form_validation->run()) {
                 $this->response['error'] = true;

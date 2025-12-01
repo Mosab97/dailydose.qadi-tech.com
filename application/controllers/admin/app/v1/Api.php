@@ -1397,7 +1397,7 @@ class Api extends CI_Controller
                 'status' => isset($_POST['status']) ? $_POST['status'] : "",
                 'city' => isset($_POST['city_id']) ? $_POST['city_id'] : "",
                 'set_default_branch' => isset($_POST['set_default_branch']) && $_POST['set_default_branch'] == "1" ? "on" : "off",
-                'self_pickup' => isset($_POST['self_pickup']) && $data['self_pickup'] == "1" ? "on": "off",
+                'self_pickup' => isset($_POST['self_pickup']) && $_POST['self_pickup'] == "1" ? "on": "off",
                 'delivery_orders' => isset($_POST['delivery_orders']) && $_POST['delivery_orders'] == "1" ? "on": "off",
                 'branch_image' => isset($_POST['image']) ? $_POST['image'] : "",
             ];
@@ -4085,12 +4085,14 @@ class Api extends CI_Controller
                 limit:10            // { default - 25 } {optional}
                 offset:0            // { default - 0 } {optional}
                 section_id:4            {optional}
+                language:en            // { default - en } {optional} - Language code (en, ar, he)
             */
 
         $this->form_validation->set_rules('branch_id', 'branch id', 'trim|required|xss_clean');
         $this->form_validation->set_rules('limit', 'Limit', 'trim|xss_clean');
         $this->form_validation->set_rules('offset', 'Offset', 'trim|xss_clean');
         $this->form_validation->set_rules('section_id', 'Section Id', 'trim|xss_clean');
+        $this->form_validation->set_rules('language', 'Language', 'trim|xss_clean');
         
 
         if (!$this->form_validation->run()) {
@@ -4105,13 +4107,53 @@ class Api extends CI_Controller
         $offset = (isset($_POST['offset']) && is_numeric($_POST['offset']) && !empty(trim($_POST['offset']))) ? $this->input->post('offset', true) : 0;
         $section_id = (isset($_POST['section_id']) && !empty(trim($_POST['section_id']))) ? $this->input->post('section_id', true) : 0;
         
-        $this->db->select('*')->where('branch_id', $_POST['branch_id']);
+        // Get language parameter, default to 'en'
+        $language_code = (isset($_POST['language']) && !empty(trim($_POST['language']))) ? $this->input->post('language', true) : 'en';
+        $language_code = $this->db->escape_str($language_code);
+        
+        // Get product-related parameters
+        $user_id = (isset($_POST['user_id']) && !empty(trim($_POST['user_id']))) ? $this->input->post('user_id', true) : '';
+        $p_limit = (isset($_POST['p_limit']) && is_numeric($_POST['p_limit']) && !empty(trim($_POST['p_limit']))) ? $this->input->post('p_limit', true) : 10;
+        $p_offset = (isset($_POST['p_offset']) && is_numeric($_POST['p_offset']) && !empty(trim($_POST['p_offset']))) ? $this->input->post('p_offset', true) : 0;
+        $p_sort = (isset($_POST['p_sort']) && !empty(trim($_POST['p_sort']))) ? $this->input->post('p_sort', true) : 'pid';
+        $p_order = (isset($_POST['p_order']) && !empty(trim($_POST['p_order']))) ? $this->input->post('p_order', true) : 'desc';
+        $filter_by = (isset($_POST['filter_by']) && !empty(trim($_POST['filter_by']))) ? $this->input->post('filter_by', true) : 'p.id';
+        
+        // Query sections with translations using LEFT JOIN
+        // Prioritize translations table for all languages including English
+        // Fallback to main table only if translation doesn't exist (for backward compatibility)
+        $this->db->select('s.*, st.title as translated_title, st.short_description as translated_short_description');
+        $this->db->from('sections s');
+        $this->db->join('section_translations st', "st.section_id = s.id AND st.language_code = '{$language_code}'", 'LEFT');
+        $this->db->where('s.branch_id', $_POST['branch_id']);
         if (isset($_POST['section_id']) && !empty($_POST['section_id'])) {
-            $this->db->where('id', $section_id);
-            $this->db->where('branch_id', $_POST['branch_id']);
+            $this->db->where('s.id', $section_id);
         }
         $this->db->limit($limit, $offset);
-        $sections = $this->db->order_by('row_order')->get('sections')->result_array();
+        $sections = $this->db->order_by('s.row_order')->get()->result_array();
+        
+        // Process sections to use translations when available, fallback to English or main table
+        for ($i = 0; $i < count($sections); $i++) {
+            // Use translation if available, otherwise try English translation, then fallback to main table
+            if (!empty($sections[$i]['translated_title'])) {
+                $sections[$i]['title'] = $sections[$i]['translated_title'];
+                $sections[$i]['short_description'] = !empty($sections[$i]['translated_short_description']) ? $sections[$i]['translated_short_description'] : $sections[$i]['short_description'];
+            } elseif ($language_code != 'en') {
+                // If requested language is not English and no translation exists, try English translation
+                $english_translation = $this->db->where('section_id', $sections[$i]['id'])
+                                                 ->where('language_code', 'en')
+                                                 ->get('section_translations')
+                                                 ->row_array();
+                if (!empty($english_translation['title'])) {
+                    $sections[$i]['title'] = $english_translation['title'];
+                    $sections[$i]['short_description'] = !empty($english_translation['short_description']) ? $english_translation['short_description'] : $sections[$i]['short_description'];
+                }
+                // Otherwise, keep main table values (backward compatibility)
+            }
+            // Remove temporary translation fields
+            unset($sections[$i]['translated_title']);
+            unset($sections[$i]['translated_short_description']);
+        }
 
         if (!empty($sections)) {
             for ($i = 0; $i < count($sections); $i++) {
@@ -4126,6 +4168,7 @@ class Api extends CI_Controller
                     }
                 }
                 $filters['branch_id'] = (isset($_POST['branch_id']) && !empty($_POST['branch_id'])) ? $this->input->post("branch_id", true) : 0;
+                $filters['language'] = $language_code; // Add language to filters for product translations
                 $categories = (isset($sections[$i]['categories']) && !empty($sections[$i]['categories']) && $sections[$i]['categories'] != NULL) ? explode(',', $sections[$i]['categories']) : null;
 
                 $products = fetch_product("", $user_id, (isset($filters)) ? $filters : null, (isset($product_ids) && !empty($product_ids)) ? $product_ids : null, $categories, $p_limit, $p_offset, $p_sort, $p_order, null, null, null, $filter_by);

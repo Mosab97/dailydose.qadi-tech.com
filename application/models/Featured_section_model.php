@@ -9,10 +9,23 @@ class Featured_section_model extends CI_Model
 
 
         $data = escape_array($data);
+        
+        // Get English translations from section_translations if available, otherwise use from main fields
+        $english_title = $data['title'];
+        $english_short_description = $data['short_description'];
+        
+        // If translations are provided, use English from translations
+        if (isset($data['section_translations']['en']['title']) && !empty($data['section_translations']['en']['title'])) {
+            $english_title = $data['section_translations']['en']['title'];
+        }
+        if (isset($data['section_translations']['en']['short_description']) && !empty($data['section_translations']['en']['short_description'])) {
+            $english_short_description = $data['section_translations']['en']['short_description'];
+        }
+        
         if($data['product_type'] == 'custom_foods'){
             $featured_data = [
-                'title' => $data['title'],
-                'short_description' => $data['short_description'],
+                'title' => $english_title,
+                'short_description' => $english_short_description,
                 'product_type' => $data['product_type'],
                 'branch_id' => $data['branch_id'],
                 'categories' => null,
@@ -22,8 +35,8 @@ class Featured_section_model extends CI_Model
         }else{
 
             $featured_data = [
-                'title' => $data['title'],
-                'short_description' => $data['short_description'],
+                'title' => $english_title,
+                'short_description' => $english_short_description,
                 'product_type' => $data['product_type'],
                 'branch_id' => $data['branch_id'],
                 'categories' => (isset($data['categories']) && !empty($data['categories'])) ? implode(',', $data['categories']) : null,
@@ -43,11 +56,38 @@ class Featured_section_model extends CI_Model
                 $featured_data['slug'] = create_unique_slug($data['title'], 'sections');
             }
             $this->db->set($featured_data)->where('id', $data['edit_featured_section'])->update('sections');
+            $section_id = $data['edit_featured_section'];
         } else {
             $featured_data['slug'] = create_unique_slug($data['title'], 'sections');
 
             $this->db->insert('sections', $featured_data);
-            return $this->db->insert_id();
+            $section_id = $this->db->insert_id();
+        }
+
+        // Always save translations including English
+        if (!empty($section_id)) {
+            // Ensure English is always included in translations
+            $translations = isset($data['section_translations']) ? $data['section_translations'] : [];
+            
+            // Always include English translation from main fields or translations
+            if (!isset($translations['en'])) {
+                $translations['en'] = [];
+            }
+            if (empty($translations['en']['title']) && !empty($english_title)) {
+                $translations['en']['title'] = $english_title;
+            }
+            if (empty($translations['en']['short_description']) && !empty($english_short_description)) {
+                $translations['en']['short_description'] = $english_short_description;
+            }
+            
+            // Save all translations including English
+            if (!empty($translations)) {
+                $this->save_section_translations($section_id, $translations);
+            }
+        }
+
+        if (isset($section_id)) {
+            return $section_id;
         }
     }
     public function get_section_list()
@@ -181,5 +221,88 @@ class Featured_section_model extends CI_Model
 
         $bulkData['rows'] = $rows;
         print_r(json_encode($bulkData));
+    }
+
+    /**
+     * Save section translations for a given section
+     * @param int $section_id - Section ID
+     * @param array $translations - Array of translations with language codes as keys
+     *                              Example: ['en' => ['title' => '...', 'short_description' => '...'], 'ar' => [...]]
+     * @return bool
+     */
+    public function save_section_translations($section_id, $translations)
+    {
+        if (empty($section_id) || empty($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            // Allow empty titles for non-English languages, but English must have a title
+            if ($language_code == 'en' && empty($translation_data['title'])) {
+                continue; // Skip English if title is empty
+            }
+            if (empty($translation_data['title']) && empty($translation_data['short_description'])) {
+                continue; // Skip if both title and description are empty
+            }
+
+            $data = [
+                'section_id' => $section_id,
+                'language_code' => $language_code,
+                'title' => isset($translation_data['title']) && !empty($translation_data['title']) ? $translation_data['title'] : '',
+                'short_description' => isset($translation_data['short_description']) && !empty($translation_data['short_description']) ? $translation_data['short_description'] : null,
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('section_id', $section_id)
+                                 ->where('language_code', $language_code)
+                                 ->get('section_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('section_translations', [
+                             'title' => $data['title'],
+                             'short_description' => $data['short_description'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('section_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get section translations
+     * @param int $section_id - Section ID
+     * @param string $language_code - Optional language code to get specific translation
+     * @return array
+     */
+    public function get_section_translations($section_id, $language_code = null)
+    {
+        if (empty($section_id)) {
+            return [];
+        }
+
+        $this->db->where('section_id', $section_id);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('section_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'title' => $row['title'],
+                'short_description' => $row['short_description'],
+            ];
+        }
+
+        return $formatted;
     }
 }

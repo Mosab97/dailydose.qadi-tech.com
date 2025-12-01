@@ -34,6 +34,27 @@ class Featured_sections extends CI_Controller
                 $featured_data = fetch_details(['id' => $_GET['edit_id']], 'sections');
                 $this->data['product_details'] = $this->db->where_in('id', explode(',', $featured_data[0]['product_ids']))->get('products')->result_array();
                 $this->data['fetched_data'] = $featured_data;
+                
+                // Load section translations
+                $translations = $this->Featured_section_model->get_section_translations($_GET['edit_id']);
+                
+                // Ensure translations array is initialized even if empty
+                if (empty($translations)) {
+                    $translations = [];
+                }
+                
+                // If English translation doesn't exist, use main table values as fallback
+                if (!isset($translations['en'])) {
+                    $translations['en'] = [
+                        'title' => isset($featured_data[0]['title']) ? $featured_data[0]['title'] : '',
+                        'short_description' => isset($featured_data[0]['short_description']) ? $featured_data[0]['short_description'] : ''
+                    ];
+                }
+                
+                $this->data['section_translations'] = $translations;
+            } else {
+                // Initialize empty translations array for new sections
+                $this->data['section_translations'] = [];
             }
             $this->data['branch'] = fetch_details('', 'branch', 'id,branch_name');
 
@@ -88,6 +109,26 @@ class Featured_sections extends CI_Controller
 
 
                 $_POST['branch_id'] = $_SESSION['branch_id'];
+                
+                // Collect translation data from POST
+                $section_translations = [];
+                if (isset($_POST['section_translations']) && is_array($_POST['section_translations'])) {
+                    $section_translations = $_POST['section_translations'];
+                }
+                
+                // Always ensure English translation is included from main fields
+                if (!isset($section_translations['en'])) {
+                    $section_translations['en'] = [];
+                }
+                if (empty($section_translations['en']['title']) && !empty($_POST['title'])) {
+                    $section_translations['en']['title'] = $_POST['title'];
+                }
+                if (empty($section_translations['en']['short_description']) && !empty($_POST['short_description'])) {
+                    $section_translations['en']['short_description'] = $_POST['short_description'];
+                }
+                
+                $_POST['section_translations'] = $section_translations;
+                
                 $this->Featured_section_model->add_featured_section($_POST);
                 $this->response['error'] = false;
                 $this->response['csrfName'] = $this->security->get_csrf_token_name();

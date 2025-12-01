@@ -251,11 +251,11 @@
 
                                 </div>
                                 <hr>
-                                <!-- <div class="form-group">
+                                <div class="form-group">
                                     <button type="reset" class="btn btn-warning">Reset</button>
                                     <button type="submit" class="btn btn-info submit_branch"
                                         id="submit_btn"><?= (isset($fetched_details[0]['id'])) ? 'Update Branch' : 'Add Branch' ?></button>
-                                </div> -->
+                                </div> 
                             </div>
 
                     </div>
