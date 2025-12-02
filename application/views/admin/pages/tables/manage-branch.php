@@ -52,7 +52,7 @@
                                     <tr>
                                         <th data-field="id" data-sortable="true">ID</th>
                                         <!-- <th data-field="branch_name" data-sortable="true">Branch Name</th> -->
-                                        <th data-field="image" data-sortable="true">Image</th>
+                                        <!-- <th data-field="image" data-sortable="true">Image</th> -->
                                         <th data-field="description" data-sortable="false" data-visible="false">Description</th>
                                         <th data-field="address" data-sortable="false">Address</th>
                                         <th data-field="longitude" data-sortable="false" data-visible="false">Longitude</th>

@@ -318,7 +318,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                                     <p> View Customers </p>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="<?= base_url('admin/customer/addresses') ?>" class="nav-link">
                                     <i class="far fa-address-book nav-icon"></i>
                                     <p> Addresses </p>
@@ -335,7 +335,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                                     <i class="fas fa-wallet nav-icon "></i>
                                     <p>Wallet Transactions</p>
                                 </a>
-                            </li>
+                            </li> -->
 
                         </ul>
                     </li>
@@ -516,12 +516,12 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                     <?php
                     }
                     if ($userData[0]['role'] == 0) { ?>
-                        <li class="nav-item mb-4">
+                        <!-- <li class="nav-item mb-4">
                             <a href="<?= base_url('admin/database_bakup/') ?>" class="nav-link">
                                 <i class="nav-icon fa fa-database text-success"></i>
                                 <p class="text">Database Backup</p>
                             </a>
-                        </li>
+                        </li> -->
                         
                 <?php  }
                 } ?>

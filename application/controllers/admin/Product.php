@@ -346,19 +346,19 @@ class Product extends CI_Controller
     {
         if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
 
-            if (isset($_POST['edit_product_id'])) {
-                if (print_msg(!has_permissions('update', 'product'), PERMISSION_ERROR_MSG, 'product')) {
-                    return false;
-                }
-                $this->form_validation->set_rules('tags[]', 'tags', 'trim|xss_clean');
+            // if (isset($_POST['edit_product_id'])) {
+            //     if (print_msg(!has_permissions('update', 'product'), PERMISSION_ERROR_MSG, 'product')) {
+            //         return false;
+            //     }
+            //     $this->form_validation->set_rules('tags[]', 'tags', 'trim|xss_clean');
 
-            } else {
-                if (print_msg(!has_permissions('create', 'product'), PERMISSION_ERROR_MSG, 'product')) {
-                    return false;
-                }
-                $this->form_validation->set_rules('tags[]', 'tags', 'trim|required|xss_clean');
+            // } else {
+            //     if (print_msg(!has_permissions('create', 'product'), PERMISSION_ERROR_MSG, 'product')) {
+            //         return false;
+            //     }
+            //     $this->form_validation->set_rules('tags[]', 'tags', 'trim|required|xss_clean');
 
-            }
+            // }
 
             $this->form_validation->set_rules('pro_input_name', 'Product Name', 'trim|required|xss_clean');
             // $this->form_validation->set_rules('indicator', 'Product Indicator', 'trim|required|xss_clean');

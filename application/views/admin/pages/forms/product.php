@@ -138,7 +138,7 @@
                                         </div> -->
                                         <div class="col-md-12 row">
 
-                                            <div class="form-group ">
+                                            <!-- <div class="form-group ">
                                                 <label for="is_cod_allowed" class="col-12 col-form-label">Is COD allowed?</label>
                                                 <div class="col-12">
                                                     <input type="checkbox" name="cod_allowed" <?= (isset($product_details[0]['cod_allowed']) && $product_details[0]['cod_allowed'] == '1') ? 'Checked' : '' ?> data-bootstrap-switch data-off-color="danger" data-on-color="success">
@@ -149,7 +149,7 @@
                                                 <div class="col-12">
                                                     <input type="checkbox" name="is_cancelable" id="is_cancelable" class="switch" <?= (isset($product_details[0]['is_cancelable']) && $product_details[0]['is_cancelable'] == '1') ? 'Checked' : ''; ?> data-bootstrap-switch data-off-color="danger" data-on-color="success">
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <!-- <div class="form-group ">
                                                 <label for="is_spicy" class="col-12 col-form-label">Is Spicy ?</label>
                                                 <div class="col-12">
@@ -196,7 +196,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="form-group ">
+                                        <!-- <div class="form-group ">
 
                                             <label for="cities" class="col-sm-2 col-form-label product-tag">Select Tags <span class='text-danger text-sm'>*</span></label>
                                             <div class="col-sm-12">
@@ -207,7 +207,7 @@
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> -->
 
                                         <!-- <div class="form-group">
                                             <label for="indicator" class="col-sm-3 col-form-label">Indicator <span class='text-danger text-sm'>*</span> </label>

@@ -292,8 +292,8 @@
                                             </th>
                                             <th data-field="final_total" data-sortable='false'>Final
                                                 Total(<?= $curreny ?>)</th>
-                                            <th data-field="payment_method" data-sortable='false' data-visible="true">
-                                                Payment Method</th>
+                                            <!-- <th data-field="payment_method" data-sortable='false' data-visible="true">
+                                                Payment Method</th> -->
                                             <th data-field="active_status" data-sortable='false' data-visible='true'>
                                                 Status</th>
                                             <th data-field="operate" data-sortable='false'></th>
@@ -377,11 +377,11 @@
                                 <thead>
                                     <tr>
                                         <th data-field="name" data-sortable="false">Name</th>
-                                        <th data-field="profile" data-sortable="false">Profile</th>
+                                        <!-- <th data-field="profile" data-sortable="false">Profile</th> -->
                                         <th data-field="total_orders" data-sortable="false">Total Oredrs</th>
                                         <th data-field="balance" data-sortable="false">Balance</th>
                                         <th data-field="mobile" data-sortable="false">Mobile No</th>
-                                        <th data-field="email" data-sortable="false">Email</th>
+                                        <!-- <th data-field="email" data-sortable="false">Email</th> -->
                                     </tr>
                                 </thead>
                             </table>
