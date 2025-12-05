@@ -218,9 +218,13 @@
                                 <hr>
                                 <h4>Social Media Links</h4>
                                 <div class="row">
-                                    <div class="form-group col-md-6">
+                                    <!-- <div class="form-group col-md-6">
                                         <label for="twitter_link">Twitter</label>
                                         <input type="text" class="form-control" name="twitter_link" value="<?= (isset($web_settings['twitter_link'])) ? output_escaping($web_settings['twitter_link']) : '' ?>" placeholder="Twitter Link" />
+                                    </div> -->
+                                    <div class="form-group col-md-6">
+                                        <label for="tiktok_link">TikTok</label>
+                                        <input type="text" class="form-control" name="tiktok_link" value="<?= (isset($web_settings['tiktok_link'])) ? output_escaping($web_settings['tiktok_link']) : '' ?>" placeholder="TikTok Link" />
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="facebook_link">Facebook</label>
