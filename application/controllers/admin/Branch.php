@@ -83,7 +83,7 @@ class Branch extends CI_Controller
             $this->form_validation->set_rules('email', 'Email', 'trim|required|xss_clean');
             $this->form_validation->set_rules('contact', 'Contact', 'trim|required|xss_clean');
             $this->form_validation->set_rules('status', 'Status', 'trim|required|xss_clean');
-            $this->form_validation->set_rules('branch_image', 'Branch Image', 'trim|required|xss_clean', array('required' => 'Branch image is required'));
+            // $this->form_validation->set_rules('branch_image', 'Branch Image', 'trim|required|xss_clean', array('required' => 'Branch image is required'));
             if (isset($_POST['edit_branch'])) {
                 $this->form_validation->set_rules('working_time', 'Working Days', 'trim|xss_clean');
             } else {

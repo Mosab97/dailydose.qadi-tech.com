@@ -213,7 +213,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group col-md-6">
+                                    <!-- <div class="form-group col-md-6">
                                         <label for="image">Image <span class='text-danger text-sm'>*</span></label>
                                         <div class="col-sm-10">
                                             <div class='col-md-3'><a
@@ -246,7 +246,7 @@
                                                 </div>
                                             <?php } ?>
                                         </div>
-                                    </div>
+                                    </div> -->
 
 
                                 </div>
