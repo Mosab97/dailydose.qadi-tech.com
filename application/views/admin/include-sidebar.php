@@ -438,12 +438,12 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                                     <p>Languages</p>
                                 </a>
                             </li> -->
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="<?= base_url('admin/web-setting/firebase') ?>" class="nav-link">
                                     <i class="fa fa-fire nav-icon "></i>
                                     <p>Firebase</p>
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </li>
                 <?php } ?>
