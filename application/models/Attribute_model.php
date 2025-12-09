@@ -29,35 +29,66 @@ class Attribute_model extends CI_Model
             // print_R($data);die;
             if(isset($data['value_id']) && !empty($data['value_id']) && isset($data['value_name']) && !empty($data['value_name'])){
 
-                $data['value_id'] = array_map('intval', $data['value_id']);
-                $attribute_values = array_combine($data['value_id'], $data['value_name']);
+                // Process values maintaining the form's index order
+                $value_ids = isset($data['value_id']) ? $data['value_id'] : [];
+                $value_names = isset($data['value_name']) ? $data['value_name'] : [];
                 
-                            foreach ($attribute_values as $key => $val) {
-                               
-                                $tempRow['attribute_id'] = $data['edit_attribute_id'];
-                                $tempRow['value'] = $val;
-                                $tempRow['status'] = 1;
-                                /* check for duplicate entry */
-                                if (is_exist(['attribute_id' => $data['edit_attribute_id'], 'value' => $val], 'attribute_values', $key)) {
-                                    return true;
-                                }
-                                
-                                if ($key === "" || $key === 0 || $key === "0") {
-                
-                                    $this->db->insert('attribute_values', $tempRow);
-                                    $new_value_id = $this->db->insert_id();
-                                    // Save attribute value translations if provided
-                                    if (isset($data['attribute_value_translations'][$key]) && !empty($data['attribute_value_translations'][$key])) {
-                                        $this->save_attribute_value_translations($new_value_id, $data['attribute_value_translations'][$key]);
-                                    }
-                                } else {
-                                    $this->db->set($tempRow)->where('id', $key)->update('attribute_values');
-                                    // Save attribute value translations if provided
-                                    if (isset($data['attribute_value_translations'][$key]) && !empty($data['attribute_value_translations'][$key])) {
-                                        $this->save_attribute_value_translations($key, $data['attribute_value_translations'][$key]);
-                                    }
-                                }
-                            }
+                // Process each value in the order they appear in the form (by array index)
+                foreach ($value_names as $form_index => $val) {
+                    $value_id = isset($value_ids[$form_index]) ? intval($value_ids[$form_index]) : 0;
+                    
+                    $tempRow['attribute_id'] = $data['edit_attribute_id'];
+                    $tempRow['value'] = $val;
+                    $tempRow['status'] = 1;
+                    
+                    // Check if this is a new value (empty or 0 value_id)
+                    if (empty($value_id) || $value_id === 0) {
+                        // New value - insert it
+                        /* check for duplicate entry */
+                        if (is_exist(['attribute_id' => $data['edit_attribute_id'], 'value' => $val], 'attribute_values')) {
+                            return true;
+                        }
+                        
+                        $this->db->insert('attribute_values', $tempRow);
+                        $new_value_id = $this->db->insert_id();
+                        
+                        // Get translations using form index (JavaScript sends with form index for new values)
+                        $translations = isset($data['attribute_value_translations'][$form_index]) ? $data['attribute_value_translations'][$form_index] : [];
+                        // Always include English from main value field
+                        if (!isset($translations['en']) || empty($translations['en']['value'])) {
+                            $translations['en'] = ['value' => $val];
+                        }
+                        // Save attribute value translations (only once)
+                        if (!empty($translations)) {
+                            $this->save_attribute_value_translations($new_value_id, $translations);
+                        }
+                    } else {
+                        // Existing value - update it
+                        /* check for duplicate entry */
+                        if (is_exist(['attribute_id' => $data['edit_attribute_id'], 'value' => $val], 'attribute_values', $value_id)) {
+                            return true;
+                        }
+                        
+                        $this->db->set($tempRow)->where('id', $value_id)->update('attribute_values');
+                        
+                        // Get translations using value_id (JavaScript sends with value_id for existing values)
+                        // But also check form index as fallback
+                        $translations = [];
+                        if (isset($data['attribute_value_translations'][$value_id])) {
+                            $translations = $data['attribute_value_translations'][$value_id];
+                        } elseif (isset($data['attribute_value_translations'][$form_index])) {
+                            $translations = $data['attribute_value_translations'][$form_index];
+                        }
+                        // Always include English from main value field
+                        if (!isset($translations['en']) || empty($translations['en']['value'])) {
+                            $translations['en'] = ['value' => $val];
+                        }
+                        // Save attribute value translations (only once)
+                        if (!empty($translations)) {
+                            $this->save_attribute_value_translations($value_id, $translations);
+                        }
+                    }
+                }
                             $this->db->set($attr_data)->where('id', $data['edit_attribute_id'])->update('attributes');
                             
                             // Save attribute translations if provided
@@ -106,30 +137,8 @@ class Attribute_model extends CI_Model
             }
         }
 
-        if (isset($data['edit_attribute_id'])) {
-            if(isset($data['value_id']) && !empty($data['value_id']) && isset($data['value_name']) && !empty($data['value_name'])){
-                $value_name = $data['value_name'];
-                $value_id = $data['value_id'];
-    
-                $blankKeys = array_keys($value_id, null);
-    
-                foreach ($blankKeys as $blankKey) {
-                    if (isset($value_name[$blankKey])) {
-                        $tempRow = array(
-                            'attribute_id' => $data['edit_attribute_id'],
-                            'value' => $value_name[$blankKey], // Use the individual value here
-                            'status' => 1
-                        );
-                        $this->db->insert('attribute_values', $tempRow);
-                        $new_value_id = $this->db->insert_id();
-                        // Save attribute value translations if provided
-                        if (isset($data['attribute_value_translations'][$blankKey]) && !empty($data['attribute_value_translations'][$blankKey])) {
-                            $this->save_attribute_value_translations($new_value_id, $data['attribute_value_translations'][$blankKey]);
-                        }
-                    }
-                }
-            }
-        }
+        // Note: Blank keys (new values) are now handled in the main loop above
+        // This section is removed to prevent duplicate inserts
     }
 
 

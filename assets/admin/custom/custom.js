@@ -7296,27 +7296,21 @@ function show_attribute_values(
                             <input type="text" class="form-control attribute-value-en" placeholder="Value Name (English)" name="value_name[]" value="${val}" required>
                             <input type="hidden" class="form-control" name="value_id[]" value="${value_id}" required>
                             
-                            <!-- Language Tabs for Attribute Value -->
+                            <!-- Language Tabs for Attribute Value Translations (Arabic & Hebrew only) -->
                             <ul class="nav nav-tabs mt-2" id="valueTabs${value_index}" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="value-${value_index}-en-tab" data-toggle="tab" href="#value-${value_index}-en" role="tab">English</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="value-${value_index}-ar-tab" data-toggle="tab" href="#value-${value_index}-ar" role="tab">Arabic</a>
+                                    <a class="nav-link active" id="value-${value_index}-ar-tab" data-toggle="tab" href="#value-${value_index}-ar" role="tab">Arabic</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="value-${value_index}-he-tab" data-toggle="tab" href="#value-${value_index}-he" role="tab">Hebrew</a>
                                 </li>
                             </ul>
                             <div class="tab-content mt-2" id="valueTabContent${value_index}">
-                                <div class="tab-pane fade show active" id="value-${value_index}-en" role="tabpanel">
-                                    <input type="text" class="form-control" placeholder="Value (English)" name="attribute_value_translations[${value_index}][en][value]" value="${val}">
-                                </div>
-                                <div class="tab-pane fade" id="value-${value_index}-ar" role="tabpanel">
-                                    <input type="text" class="form-control" dir="rtl" placeholder="القيمة (Arabic)" name="attribute_value_translations[${value_index}][ar][value]" value="">
+                                <div class="tab-pane fade show active" id="value-${value_index}-ar" role="tabpanel">
+                                    <input type="text" class="form-control attribute-value-ar" dir="rtl" placeholder="القيمة (Arabic)" data-value-index="${value_index}" value="">
                                 </div>
                                 <div class="tab-pane fade" id="value-${value_index}-he" role="tabpanel">
-                                    <input type="text" class="form-control" dir="rtl" placeholder="הערך (Hebrew)" name="attribute_value_translations[${value_index}][he][value]" value="">
+                                    <input type="text" class="form-control attribute-value-he" dir="rtl" placeholder="הערך (Hebrew)" data-value-index="${value_index}" value="">
                                 </div>
                             </div>
                         </div>
@@ -7336,27 +7330,21 @@ function show_attribute_values(
                         <input type="text" class="form-control attribute-value-en" placeholder="Value Name (English)" name="value_name[]" value="" required>
                         <input type="hidden" class="form-control" name="value_id[]" value="" required>
                         
-                        <!-- Language Tabs for Attribute Value -->
+                        <!-- Language Tabs for Attribute Value Translations (Arabic & Hebrew only) -->
                         <ul class="nav nav-tabs mt-2" id="valueTabs0" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="value-0-en-tab" data-toggle="tab" href="#value-0-en" role="tab">English</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="value-0-ar-tab" data-toggle="tab" href="#value-0-ar" role="tab">Arabic</a>
+                                <a class="nav-link active" id="value-0-ar-tab" data-toggle="tab" href="#value-0-ar" role="tab">Arabic</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="value-0-he-tab" data-toggle="tab" href="#value-0-he" role="tab">Hebrew</a>
                             </li>
                         </ul>
                         <div class="tab-content mt-2" id="valueTabContent0">
-                            <div class="tab-pane fade show active" id="value-0-en" role="tabpanel">
-                                <input type="text" class="form-control" placeholder="Value (English)" name="attribute_value_translations[0][en][value]" value="">
-                            </div>
-                            <div class="tab-pane fade" id="value-0-ar" role="tabpanel">
-                                <input type="text" class="form-control" dir="rtl" placeholder="القيمة (Arabic)" name="attribute_value_translations[0][ar][value]" value="">
+                            <div class="tab-pane fade show active" id="value-0-ar" role="tabpanel">
+                                <input type="text" class="form-control attribute-value-ar" dir="rtl" placeholder="القيمة (Arabic)" data-value-index="0" value="">
                             </div>
                             <div class="tab-pane fade" id="value-0-he" role="tabpanel">
-                                <input type="text" class="form-control" dir="rtl" placeholder="הערך (Hebrew)" name="attribute_value_translations[0][he][value]" value="">
+                                <input type="text" class="form-control attribute-value-he" dir="rtl" placeholder="הערך (Hebrew)" data-value-index="0" value="">
                             </div>
                         </div>
                     </div>
@@ -7377,13 +7365,7 @@ function show_attribute_values(
     });
   }
   
-  // Sync English fields
-  $(document).off('input', '.attribute-value-en').on('input', '.attribute-value-en', function() {
-    var $row = $(this).closest('.attribute-value-row');
-    var valueIndex = $row.data('value-index');
-    var value = $(this).val();
-    $row.find(`input[name="attribute_value_translations[${valueIndex}][en][value]"]`).val(value);
-  });
+  // Sync is handled in form submission - no need for real-time sync since we collect from value_name[] directly
 }
 
 // Function to load attribute value translations
@@ -7403,15 +7385,14 @@ function load_attribute_value_translations(attribute_value_id, value_index) {
           return;
         }
         
+        // Load Arabic and Hebrew translations
         if (translations['ar'] && translations['ar'].value) {
-          $row.find(`input[name="attribute_value_translations[${value_index}][ar][value]"]`).val(translations['ar'].value);
+          $row.find(`input.attribute-value-ar[data-value-index="${value_index}"]`).val(translations['ar'].value);
         }
         if (translations['he'] && translations['he'].value) {
-          $row.find(`input[name="attribute_value_translations[${value_index}][he][value]"]`).val(translations['he'].value);
+          $row.find(`input.attribute-value-he[data-value-index="${value_index}"]`).val(translations['he'].value);
         }
-        if (translations['en'] && translations['en'].value) {
-          $row.find(`input[name="attribute_value_translations[${value_index}][en][value]"]`).val(translations['en'].value);
-        }
+        // English is already in the main value_name[] field, no need to sync
       }
     },
     error: function(xhr, status, error) {
@@ -7502,41 +7483,34 @@ $("#edit-attributes-form").on("submit", function (e) {
   }
   
   // Collect attribute value translations
+  // English comes from value_name[], Arabic and Hebrew from translation fields (no name attribute to avoid form submission)
   var attribute_value_translations = {};
   $('.attribute-value-row').each(function() {
     var value_index = $(this).data('value-index');
     var value_id = $(this).data('value-id');
-    var en_value = $(this).find(`input[name="attribute_value_translations[${value_index}][en][value]"]`).val();
-    var ar_value = $(this).find(`input[name="attribute_value_translations[${value_index}][ar][value]"]`).val();
-    var he_value = $(this).find(`input[name="attribute_value_translations[${value_index}][he][value]"]`).val();
+    // Get English value from main field (value_name[])
+    var en_value = $(this).find('input[name="value_name[]"]').val();
+    // Get Arabic and Hebrew from fields with data-value-index attribute
+    var ar_value = $(this).find(`input.attribute-value-ar[data-value-index="${value_index}"]`).val();
+    var he_value = $(this).find(`input.attribute-value-he[data-value-index="${value_index}"]`).val();
     
-    if (value_id && value_id !== '') {
-      var translations = {};
-      if (en_value) {
-        translations['en'] = { value: en_value };
-      }
-      if (ar_value && ar_value.trim() !== '') {
-        translations['ar'] = { value: ar_value };
-      }
-      if (he_value && he_value.trim() !== '') {
-        translations['he'] = { value: he_value };
-      }
-      if (Object.keys(translations).length > 0) {
+    // Always include English translation from main field
+    var translations = {};
+    if (en_value && en_value.trim() !== '') {
+      translations['en'] = { value: en_value };
+    }
+    if (ar_value && ar_value.trim() !== '') {
+      translations['ar'] = { value: ar_value };
+    }
+    if (he_value && he_value.trim() !== '') {
+      translations['he'] = { value: he_value };
+    }
+    
+    // Only add if we have at least English translation
+    if (Object.keys(translations).length > 0) {
+      if (value_id && value_id !== '') {
         attribute_value_translations[value_id] = translations;
-      }
-    } else {
-      // For new values, use index
-      var translations = {};
-      if (en_value) {
-        translations['en'] = { value: en_value };
-      }
-      if (ar_value && ar_value.trim() !== '') {
-        translations['ar'] = { value: ar_value };
-      }
-      if (he_value && he_value.trim() !== '') {
-        translations['he'] = { value: he_value };
-      }
-      if (Object.keys(translations).length > 0) {
+      } else {
         attribute_value_translations[value_index] = translations;
       }
     }
