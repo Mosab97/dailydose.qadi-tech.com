@@ -240,7 +240,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                         </a>
                     </li>
                 <?php } ?>
-                <!-- <?php if (has_permissions('read', 'support_tickets')) { ?>
+                <?php if (has_permissions('read', 'support_tickets')) { ?>
                     <li class="nav-item has-treeview <?= is_url_active('admin/tickets') ? 'menu-open' : '' ?>">
 
                         <a href="#" class="nav-link <?= is_url_active('admin/tickets') ? 'active' : '' ?>">
@@ -266,7 +266,7 @@ if ($authentication_settings !== null && is_string($authentication_settings)) {
                             </li>
                         </ul>
                     </li>
-                <?php } ?> -->
+                <?php } ?> 
                 <?php if (has_permissions('read', 'promo_code')) { ?>
                     <li class="nav-item">
                         <a href="<?= base_url('admin/promo-code/manage-promo-code') ?>" class="nav-link <?= is_url_active('admin/promo-code') ? 'active' : '' ?>">
