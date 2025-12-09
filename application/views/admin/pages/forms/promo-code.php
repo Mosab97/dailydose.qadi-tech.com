@@ -118,9 +118,15 @@
                                         <select <?= $branch_selection ?> name="branch[]" class="search_branch w-100"
                                             multiple onload="multiselect()">
                                             <option value="">Select Branch for Product</option>
-                                            <?php foreach ($branch as $row) { ?>
+                                            <?php 
+                                            $selectedBranches = isset($fetched_details[0]['branch_id']) ? explode(',', $fetched_details[0]['branch_id']) : [];
+                                            // For new promo code, select the first branch by default
+                                            $isNewPromoCode = !isset($fetched_details[0]['id']) || empty($fetched_details[0]['id']);
+                                            if ($isNewPromoCode && !empty($branch)) {
+                                                $selectedBranches[] = $branch[0]['id'];
+                                            }
+                                            foreach ($branch as $row) { ?>
                                                 <?php
-                                                $selectedBranches = isset($fetched_details[0]['branch_id']) ? explode(',', $fetched_details[0]['branch_id']) : [];
                                                 if (in_array($row['id'], $selectedBranches)) {
                                                 ?>
                                                     <option value="<?= $row['id'] ?>" selected>
