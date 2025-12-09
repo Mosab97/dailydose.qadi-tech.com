@@ -1960,11 +1960,32 @@ $(document).on("submit", ".container-fluid .form-submit-event", function (e) {
   var btn_val = submit_btn.val();
   var button_text = (btn_html && btn_html !== "undefined") ? btn_html : btn_val;
   
-  // Sync English attribute name field if this is an attribute form
+  // Collect attribute translations if this is an attribute form
   if ($("#attribute_name").length) {
-    // Sync English field - form fields will be sent automatically, no need to append JSON
+    // Sync English field first
     var name_en = $("#attribute_name").val();
     $("#attribute_name_en").val(name_en);
+    
+    // Collect all attribute translations
+    var attribute_translations = {};
+    var en_name = $("#attribute_name_en").val() || $("#attribute_name").val();
+    var ar_name = $("#attribute_name_ar").val();
+    var he_name = $("#attribute_name_he").val();
+    
+    if (en_name) {
+      attribute_translations['en'] = { name: en_name };
+    }
+    if (ar_name && ar_name.trim() !== '') {
+      attribute_translations['ar'] = { name: ar_name };
+    }
+    if (he_name && he_name.trim() !== '') {
+      attribute_translations['he'] = { name: he_name };
+    }
+    
+    // Add to form data as JSON string
+    if (Object.keys(attribute_translations).length > 0) {
+      formData.append('attribute_translations', JSON.stringify(attribute_translations));
+    }
   }
   
   // Sync English section translation fields if this is a featured section form
@@ -7209,19 +7230,20 @@ $(document).on("click", ".edit_attribute", function (e, rows) {
       if (response && !response.error && response.data) {
         var translations = response.data;
         // Populate translation fields
-        if (translations['ar']) {
-          $("#modal_attribute_name_ar").val(translations['ar'].name || '');
+        if (translations['ar'] && translations['ar'].name) {
+          $("#modal_attribute_name_ar").val(translations['ar'].name);
         }
-        if (translations['he']) {
-          $("#modal_attribute_name_he").val(translations['he'].name || '');
+        if (translations['he'] && translations['he'].name) {
+          $("#modal_attribute_name_he").val(translations['he'].name);
         }
-        if (translations['en']) {
-          $("#modal_attribute_name_en").val(translations['en'].name || $("#name").val());
+        if (translations['en'] && translations['en'].name) {
+          $("#modal_attribute_name_en").val(translations['en'].name);
+          $("#name").val(translations['en'].name);
         }
       }
     },
-    error: function() {
-      console.log("Could not load translations for attribute");
+    error: function(xhr, status, error) {
+      console.log("Could not load translations for attribute:", error);
     }
   });
 
@@ -7263,6 +7285,7 @@ function show_attribute_values(
   attribute_value_ids = []
 ) {
   var html = "";
+  var translations_to_load = [];
 
   if (attribute_values.length > 0) {
     $.each(attribute_values, function (key, val) {
@@ -7302,9 +7325,9 @@ function show_attribute_values(
                         </div>
                     </div>`;
       
-      // Load translations for existing attribute value
+      // Store translation loading info for after HTML is appended
       if (value_id && value_id !== '') {
-        load_attribute_value_translations(value_id, value_index);
+        translations_to_load.push({ value_id: value_id, value_index: value_index });
       }
     });
   } else {
@@ -7344,6 +7367,16 @@ function show_attribute_values(
   }
   $("#attribute_values_html").append(html);
   
+  // Load translations after HTML is in the DOM
+  if (translations_to_load.length > 0) {
+    translations_to_load.forEach(function(item) {
+      // Use setTimeout to ensure DOM is ready
+      setTimeout(function() {
+        load_attribute_value_translations(item.value_id, item.value_index);
+      }, 100);
+    });
+  }
+  
   // Sync English fields
   $(document).off('input', '.attribute-value-en').on('input', '.attribute-value-en', function() {
     var $row = $(this).closest('.attribute-value-row');
@@ -7364,19 +7397,25 @@ function load_attribute_value_translations(attribute_value_id, value_index) {
       if (response && !response.error && response.data) {
         var translations = response.data;
         var $row = $(`.attribute-value-row[data-value-id="${attribute_value_id}"]`);
-        if (translations['ar']) {
-          $row.find(`input[name="attribute_value_translations[${value_index}][ar][value]"]`).val(translations['ar'].value || '');
+        
+        if ($row.length === 0) {
+          console.log("Could not find row for attribute value ID:", attribute_value_id);
+          return;
         }
-        if (translations['he']) {
-          $row.find(`input[name="attribute_value_translations[${value_index}][he][value]"]`).val(translations['he'].value || '');
+        
+        if (translations['ar'] && translations['ar'].value) {
+          $row.find(`input[name="attribute_value_translations[${value_index}][ar][value]"]`).val(translations['ar'].value);
         }
-        if (translations['en']) {
-          $row.find(`input[name="attribute_value_translations[${value_index}][en][value]"]`).val(translations['en'].value || '');
+        if (translations['he'] && translations['he'].value) {
+          $row.find(`input[name="attribute_value_translations[${value_index}][he][value]"]`).val(translations['he'].value);
+        }
+        if (translations['en'] && translations['en'].value) {
+          $row.find(`input[name="attribute_value_translations[${value_index}][en][value]"]`).val(translations['en'].value);
         }
       }
     },
-    error: function() {
-      console.log("Could not load translations for attribute value");
+    error: function(xhr, status, error) {
+      console.log("Could not load translations for attribute value:", error);
     }
   });
 }
