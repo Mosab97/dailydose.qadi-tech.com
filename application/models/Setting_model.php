@@ -289,6 +289,13 @@ class Setting_model extends CI_Model
     {
         $post = escape_array($post);
 
+        // Get English value from translations if available, otherwise use main field
+        $english_value = isset($post['contact_input_description']) ? $post['contact_input_description'] : '';
+        if (isset($post['setting_translations']['en']['value']) && !empty($post['setting_translations']['en']['value'])) {
+            $english_value = $post['setting_translations']['en']['value'];
+        }
+
+        // Save to main table (backward compatibility)
         $query = $this->db->get_where('settings', array(
             'variable' => 'contact_us'
         ));
@@ -296,11 +303,29 @@ class Setting_model extends CI_Model
         if ($count === 0) {
             $data = array(
                 'variable' => 'contact_us',
-                'value' => $post['contact_input_description']
+                'value' => $english_value
             );
             $this->db->insert('settings', $data);
         } else {
-            $this->db->set('value', $post['contact_input_description'])->where('variable', 'contact_us')->update('settings');
+            $this->db->set('value', $english_value)->where('variable', 'contact_us')->update('settings');
+        }
+
+        // Save translations if provided
+        if (!empty($post['setting_translations']) && is_array($post['setting_translations'])) {
+            $translations = $post['setting_translations'];
+            
+            // Always include English translation
+            if (!isset($translations['en'])) {
+                $translations['en'] = [];
+            }
+            if (empty($translations['en']['value']) && !empty($english_value)) {
+                $translations['en']['value'] = $english_value;
+            }
+            
+            // Save all translations including English
+            if (!empty($translations)) {
+                $this->save_setting_translations('contact_us', $translations);
+            }
         }
     }
 
@@ -308,6 +333,13 @@ class Setting_model extends CI_Model
     {
         $post = escape_array($post);
 
+        // Get English value from translations if available, otherwise use main field
+        $english_value = isset($post['privacy_policy_input_description']) ? $post['privacy_policy_input_description'] : '';
+        if (isset($post['privacy_policy_translations']['en']['value']) && !empty($post['privacy_policy_translations']['en']['value'])) {
+            $english_value = $post['privacy_policy_translations']['en']['value'];
+        }
+
+        // Save to main table (backward compatibility)
         $query = $this->db->get_where('settings', array(
             'variable' => 'privacy_policy'
         ));
@@ -315,11 +347,29 @@ class Setting_model extends CI_Model
         if ($count === 0) {
             $data = array(
                 'variable' => 'privacy_policy',
-                'value' => $post['privacy_policy_input_description']
+                'value' => $english_value
             );
             $this->db->insert('settings', $data);
         } else {
-            $this->db->set('value', $post['privacy_policy_input_description'])->where('variable', 'privacy_policy')->update('settings');
+            $this->db->set('value', $english_value)->where('variable', 'privacy_policy')->update('settings');
+        }
+
+        // Save translations if provided
+        if (!empty($post['privacy_policy_translations']) && is_array($post['privacy_policy_translations'])) {
+            $translations = $post['privacy_policy_translations'];
+            
+            // Always include English translation
+            if (!isset($translations['en'])) {
+                $translations['en'] = [];
+            }
+            if (empty($translations['en']['value']) && !empty($english_value)) {
+                $translations['en']['value'] = $english_value;
+            }
+            
+            // Save all translations including English
+            if (!empty($translations)) {
+                $this->save_setting_translations('privacy_policy', $translations);
+            }
         }
     }
 
@@ -327,6 +377,13 @@ class Setting_model extends CI_Model
     {
         $post = escape_array($post);
 
+        // Get English value from translations if available, otherwise use main field
+        $english_value = isset($post['terms_n_conditions_input_description']) ? $post['terms_n_conditions_input_description'] : '';
+        if (isset($post['terms_n_conditions_translations']['en']['value']) && !empty($post['terms_n_conditions_translations']['en']['value'])) {
+            $english_value = $post['terms_n_conditions_translations']['en']['value'];
+        }
+
+        // Save to main table (backward compatibility)
         $query = $this->db->get_where('settings', array(
             'variable' => 'terms_conditions'
         ));
@@ -334,16 +391,43 @@ class Setting_model extends CI_Model
         if ($count === 0) {
             $data = array(
                 'variable' => 'terms_conditions',
-                'value' => $post['terms_n_conditions_input_description']
+                'value' => $english_value
             );
             $this->db->insert('settings', $data);
         } else {
-            $this->db->set('value', $post['terms_n_conditions_input_description'])->where('variable', 'terms_conditions')->update('settings');
+            $this->db->set('value', $english_value)->where('variable', 'terms_conditions')->update('settings');
+        }
+
+        // Save translations if provided
+        if (!empty($post['terms_n_conditions_translations']) && is_array($post['terms_n_conditions_translations'])) {
+            $translations = $post['terms_n_conditions_translations'];
+            
+            // Always include English translation
+            if (!isset($translations['en'])) {
+                $translations['en'] = [];
+            }
+            if (empty($translations['en']['value']) && !empty($english_value)) {
+                $translations['en']['value'] = $english_value;
+            }
+            
+            // Save all translations including English
+            if (!empty($translations)) {
+                $this->save_setting_translations('terms_conditions', $translations);
+            }
         }
     }
 
     public function update_about_us($post)
     {
+        $post = escape_array($post);
+
+        // Get English value from translations if available, otherwise use main field
+        $english_value = isset($post['about_us_input_description']) ? $post['about_us_input_description'] : '';
+        if (isset($post['setting_translations']['en']['value']) && !empty($post['setting_translations']['en']['value'])) {
+            $english_value = $post['setting_translations']['en']['value'];
+        }
+
+        // Save to main table (backward compatibility)
         $query = $this->db->get_where('settings', array(
             'variable' => 'about_us'
         ));
@@ -351,11 +435,29 @@ class Setting_model extends CI_Model
         if ($count === 0) {
             $data = array(
                 'variable' => 'about_us',
-                'value' => $post['about_us_input_description']
+                'value' => $english_value
             );
             $this->db->insert('settings', $data);
         } else {
-            $this->db->set('value', $post['about_us_input_description'])->where('variable', 'about_us')->update('settings');
+            $this->db->set('value', $english_value)->where('variable', 'about_us')->update('settings');
+        }
+
+        // Save translations if provided
+        if (!empty($post['setting_translations']) && is_array($post['setting_translations'])) {
+            $translations = $post['setting_translations'];
+            
+            // Always include English translation
+            if (!isset($translations['en'])) {
+                $translations['en'] = [];
+            }
+            if (empty($translations['en']['value']) && !empty($english_value)) {
+                $translations['en']['value'] = $english_value;
+            }
+            
+            // Save all translations including English
+            if (!empty($translations)) {
+                $this->save_setting_translations('about_us', $translations);
+            }
         }
     }
 
@@ -675,5 +777,84 @@ class Setting_model extends CI_Model
             }
 
         }
+    }
+
+    /**
+     * Save setting translations
+     * @param string $setting_variable - Setting variable name (contact_us, about_us, etc.)
+     * @param array $translations - Array of translations by language code
+     * @return bool
+     */
+    public function save_setting_translations($setting_variable, $translations)
+    {
+        if (empty($setting_variable) || empty($translations)) {
+            return false;
+        }
+
+        foreach ($translations as $language_code => $translation_data) {
+            // Allow empty values for non-English languages, but English must have a value
+            if ($language_code == 'en' && empty($translation_data['value'])) {
+                continue; // Skip English if value is empty
+            }
+            if (empty($translation_data['value'])) {
+                continue; // Skip if value is empty
+            }
+
+            $data = [
+                'setting_variable' => $setting_variable,
+                'language_code' => $language_code,
+                'value' => isset($translation_data['value']) && !empty($translation_data['value']) ? $translation_data['value'] : '',
+            ];
+
+            // Check if translation already exists
+            $existing = $this->db->where('setting_variable', $setting_variable)
+                                 ->where('language_code', $language_code)
+                                 ->get('settings_translations')
+                                 ->row_array();
+
+            if ($existing) {
+                // Update existing translation
+                $this->db->where('id', $existing['id'])
+                         ->update('settings_translations', [
+                             'value' => $data['value'],
+                         ]);
+            } else {
+                // Insert new translation
+                $this->db->insert('settings_translations', $data);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get setting translations
+     * @param string $setting_variable - Setting variable name
+     * @param string $language_code - Optional language code to get specific translation
+     * @return array
+     */
+    public function get_setting_translations($setting_variable, $language_code = null)
+    {
+        if (empty($setting_variable)) {
+            return [];
+        }
+
+        $this->db->where('setting_variable', $setting_variable);
+        
+        if (!empty($language_code)) {
+            $this->db->where('language_code', $language_code);
+        }
+
+        $result = $this->db->get('settings_translations')->result_array();
+
+        // Format result as associative array with language code as key
+        $formatted = [];
+        foreach ($result as $row) {
+            $formatted[$row['language_code']] = [
+                'value' => $row['value'],
+            ];
+        }
+
+        return $formatted;
     }
 }

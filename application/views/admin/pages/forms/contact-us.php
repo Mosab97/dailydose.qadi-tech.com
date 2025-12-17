@@ -25,11 +25,38 @@
             <!-- form start -->
             <form class="form-horizontal form-submit-event" action="<?= base_url('admin/Contact_us/update-contact-settings'); ?>" method="POST" enctype="multipart/form-data">
               <div class="card-body pad">
-                <label for="other_images">Contact Us </label>
+                <label for="contact_us_content">Contact Us </label>
                 <div class="mb-3">
-                  <textarea name="contact_input_description" class="textarea " placeholder="Place some text here text_editor">
-                          <?= $contact_info ?>
-                        </textarea>
+                  <!-- Language Tabs for Contact Us -->
+                  <ul class="nav nav-tabs" id="contactUsTabs" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="contact-us-en-tab" data-toggle="tab" href="#contact-us-en" role="tab">English</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="contact-us-ar-tab" data-toggle="tab" href="#contact-us-ar" role="tab">Arabic</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" id="contact-us-he-tab" data-toggle="tab" href="#contact-us-he" role="tab">Hebrew</a>
+                    </li>
+                  </ul>
+                  <div class="tab-content mt-2" id="contactUsTabContent">
+                    <div class="tab-pane fade show active" id="contact-us-en" role="tabpanel">
+                      <textarea name="contact_input_description" id="contact_input_description" class="textarea text_editor" placeholder="Place some text here (English)">
+                          <?= isset($contact_info) ? $contact_info : '' ?>
+                      </textarea>
+                      <input type="hidden" id="contact_input_description_en" name="setting_translations[en][value]" value="<?= isset($setting_translations['en']['value']) ? htmlspecialchars($setting_translations['en']['value']) : (isset($contact_info) ? htmlspecialchars($contact_info) : '') ?>">
+                    </div>
+                    <div class="tab-pane fade" id="contact-us-ar" role="tabpanel">
+                      <textarea name="setting_translations[ar][value]" id="contact_input_description_ar" class="textarea text_editor" dir="rtl" placeholder="ضع النص هنا (Arabic)">
+                          <?= isset($setting_translations['ar']['value']) ? $setting_translations['ar']['value'] : '' ?>
+                      </textarea>
+                    </div>
+                    <div class="tab-pane fade" id="contact-us-he" role="tabpanel">
+                      <textarea name="setting_translations[he][value]" id="contact_input_description_he" class="textarea text_editor" dir="rtl" placeholder="הכנס טקסט כאן (Hebrew)">
+                          <?= isset($setting_translations['he']['value']) ? $setting_translations['he']['value'] : '' ?>
+                      </textarea>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group">

@@ -24,7 +24,26 @@ class Contact_us extends CI_Controller
             $settings = get_settings('system_settings', true);
             $this->data['title'] = 'Contact Us | ' . $settings['app_name'];
             $this->data['meta_description'] = ' Contact Us | ' . $settings['app_name'];
-            $this->data['contact_info'] = get_settings('contact_us');
+            
+            // Load translations
+            $translations = $this->Setting_model->get_setting_translations('contact_us');
+            
+            // Ensure translations array is initialized even if empty
+            if (empty($translations)) {
+                $translations = [];
+            }
+            
+            // If English translation doesn't exist, use main table value as fallback
+            if (!isset($translations['en'])) {
+                $contact_info = get_settings('contact_us');
+                $translations['en'] = [
+                    'value' => isset($contact_info) ? $contact_info : ''
+                ];
+            }
+            
+            $this->data['contact_info'] = isset($translations['en']['value']) ? $translations['en']['value'] : '';
+            $this->data['setting_translations'] = $translations;
+            
             if (!isset($_SESSION['branch_id'])) {
 
                 redirect('admin/branch', 'refresh');
@@ -58,6 +77,22 @@ class Contact_us extends CI_Controller
             } else {
                 $contact_input_description = strip_tags($_POST['contact_input_description']);
                 if(isset($contact_input_description) && !empty($contact_input_description)){
+                    // Collect translation data from POST
+                    $setting_translations = [];
+                    if (isset($_POST['setting_translations']) && is_array($_POST['setting_translations'])) {
+                        $setting_translations = $_POST['setting_translations'];
+                    }
+                    
+                    // Always ensure English translation is included from main field
+                    if (!isset($setting_translations['en'])) {
+                        $setting_translations['en'] = [];
+                    }
+                    if (empty($setting_translations['en']['value']) && !empty($_POST['contact_input_description'])) {
+                        $setting_translations['en']['value'] = $_POST['contact_input_description'];
+                    }
+                    
+                    $_POST['setting_translations'] = $setting_translations;
+                    
                     $this->Setting_model->update_contact_details($_POST);
                     $this->response['error'] = false;
                     $this->response['csrfName'] = $this->security->get_csrf_token_name();

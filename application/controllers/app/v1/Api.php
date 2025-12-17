@@ -193,7 +193,7 @@ class Api extends CI_Controller
         header("Pragma: no-cache");
 
         $this->load->library(['upload', 'ion_auth', 'form_validation', 'paypal_lib', 'jwt', 'Key']);
-        $this->load->model(['category_model', 'order_model', 'Rating_model', 'Area_model', 'Cart_model', 'address_model', 'Transaction_model', 'ticket_model', 'Order_model', 'notification_model', 'faq_model', 'Promo_code_model', 'Rider_model', 'Branch_model']);
+        $this->load->model(['category_model', 'order_model', 'Rating_model', 'Area_model', 'Cart_model', 'address_model', 'Transaction_model', 'ticket_model', 'Order_model', 'notification_model', 'faq_model', 'Promo_code_model', 'Rider_model', 'Branch_model', 'Setting_model']);
         $this->load->helper(['language', 'string', 'function', 'sms_helper']);
         $this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
         $this->lang->load('auth');
@@ -1612,10 +1612,16 @@ class Api extends CI_Controller
         /*
             type : payment_method | all // { default : all  } optional
             user_id:  15 { optional }
+            language:en            // { default - en } {optional} - Language code (en, ar, he)
         */
         $type = (isset($_POST['type']) && $_POST['type'] == 'payment_method') ? 'payment_method' : 'all';
         $this->form_validation->set_rules('type', 'Setting Type', 'trim|xss_clean');
         $this->form_validation->set_rules('user_id', 'User id', 'trim|numeric|xss_clean');
+        $this->form_validation->set_rules('language', 'Language', 'trim|xss_clean');
+        
+        // Get language parameter, default to 'en'
+        $language_code = (isset($_POST['language']) && !empty(trim($_POST['language']))) ? $this->input->post('language', true) : 'en';
+        $language_code = $this->db->escape_str($language_code);
 
         if (!$this->form_validation->run()) {
             $this->response['error'] = true;
@@ -1672,6 +1678,31 @@ class Api extends CI_Controller
                         }
                         $general_settings[$type] = [];
                         $settings_res = get_settings($type, $isjson);
+                        
+                        // Apply translations for translatable settings
+                        if (in_array($type, ['contact_us', 'about_us', 'privacy_policy', 'terms_conditions'])) {
+                            // Get translation from settings_translations table
+                            $translation = $this->db->select('value')
+                                                   ->where('setting_variable', $type)
+                                                   ->where('language_code', $language_code)
+                                                   ->get('settings_translations')
+                                                   ->row_array();
+                            
+                            if (!empty($translation['value'])) {
+                                $settings_res = $translation['value'];
+                            } elseif ($language_code != 'en') {
+                                // Fallback to English translation if requested language doesn't exist
+                                $english_translation = $this->db->select('value')
+                                                               ->where('setting_variable', $type)
+                                                               ->where('language_code', 'en')
+                                                               ->get('settings_translations')
+                                                               ->row_array();
+                                if (!empty($english_translation['value'])) {
+                                    $settings_res = $english_translation['value'];
+                                }
+                                // Otherwise keep main table value (backward compatibility)
+                            }
+                        }
 
                         if ($type == 'logo') {
                             $settings_res = base_url() . $settings_res;

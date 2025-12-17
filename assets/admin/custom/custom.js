@@ -4004,6 +4004,60 @@ $(document).ready(function() {
       $("#section_short_description_en").val(descVal);
     }
   }
+  
+  // Initialize Settings translation fields on page load
+  // Contact Us
+  if ($("#contact_input_description").length && $("#contact_input_description_en").length) {
+    var contactVal = $("#contact_input_description").val();
+    if (contactVal && !$("#contact_input_description_en").val()) {
+      $("#contact_input_description_en").val(contactVal);
+    }
+  }
+  
+  // About Us
+  if ($("#about_us_input_description").length && $("#about_us_input_description_en").length) {
+    var aboutVal = $("#about_us_input_description").val();
+    if (aboutVal && !$("#about_us_input_description_en").val()) {
+      $("#about_us_input_description_en").val(aboutVal);
+    }
+  }
+  
+  // Privacy Policy
+  if ($("#privacy_policy_input_description").length && $("#privacy_policy_input_description_en").length) {
+    var privacyVal = $("#privacy_policy_input_description").val();
+    if (privacyVal && !$("#privacy_policy_input_description_en").val()) {
+      $("#privacy_policy_input_description_en").val(privacyVal);
+    }
+  }
+  
+  // Terms & Conditions
+  if ($("#terms_n_conditions_input_description").length && $("#terms_n_conditions_input_description_en").length) {
+    var termsVal = $("#terms_n_conditions_input_description").val();
+    if (termsVal && !$("#terms_n_conditions_input_description_en").val()) {
+      $("#terms_n_conditions_input_description_en").val(termsVal);
+    }
+  }
+});
+
+// Sync Settings English fields with hidden translation fields
+// Contact Us
+$(document).on("input", "#contact_input_description", function() {
+  $("#contact_input_description_en").val($(this).val());
+});
+
+// About Us
+$(document).on("input", "#about_us_input_description", function() {
+  $("#about_us_input_description_en").val($(this).val());
+});
+
+// Privacy Policy
+$(document).on("input", "#privacy_policy_input_description", function() {
+  $("#privacy_policy_input_description_en").val($(this).val());
+});
+
+// Terms & Conditions
+$(document).on("input", "#terms_n_conditions_input_description", function() {
+  $("#terms_n_conditions_input_description_en").val($(this).val());
 });
 
 //6.Notifation-Module

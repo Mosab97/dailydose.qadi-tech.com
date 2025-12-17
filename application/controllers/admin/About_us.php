@@ -25,7 +25,26 @@ class About_us extends CI_Controller
             $settings = get_settings('system_settings', true);
             $this->data['title'] = 'About Us | ' . $settings['app_name'];
             $this->data['meta_description'] = 'About Us | ' . $settings['app_name'];
-            $this->data['about_us'] = get_settings('about_us');
+            
+            // Load translations
+            $translations = $this->Setting_model->get_setting_translations('about_us');
+            
+            // Ensure translations array is initialized even if empty
+            if (empty($translations)) {
+                $translations = [];
+            }
+            
+            // If English translation doesn't exist, use main table value as fallback
+            if (!isset($translations['en'])) {
+                $about_us = get_settings('about_us');
+                $translations['en'] = [
+                    'value' => isset($about_us) ? $about_us : ''
+                ];
+            }
+            
+            $this->data['about_us'] = isset($translations['en']['value']) ? $translations['en']['value'] : '';
+            $this->data['setting_translations'] = $translations;
+            
             if (!isset($_SESSION['branch_id'])) {
 
                 redirect('admin/branch', 'refresh');
@@ -57,6 +76,21 @@ class About_us extends CI_Controller
             } else {
                 $about_us_input_description = strip_tags($_POST['about_us_input_description']);
                 if (isset($about_us_input_description) && !empty($about_us_input_description)) {
+                    // Collect translation data from POST
+                    $setting_translations = [];
+                    if (isset($_POST['setting_translations']) && is_array($_POST['setting_translations'])) {
+                        $setting_translations = $_POST['setting_translations'];
+                    }
+                    
+                    // Always ensure English translation is included from main field
+                    if (!isset($setting_translations['en'])) {
+                        $setting_translations['en'] = [];
+                    }
+                    if (empty($setting_translations['en']['value']) && !empty($_POST['about_us_input_description'])) {
+                        $setting_translations['en']['value'] = $_POST['about_us_input_description'];
+                    }
+                    
+                    $_POST['setting_translations'] = $setting_translations;
 
                     $this->Setting_model->update_about_us($_POST);
                     $this->response['error'] = false;

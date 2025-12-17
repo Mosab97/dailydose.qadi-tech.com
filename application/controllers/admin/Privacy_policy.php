@@ -23,8 +23,35 @@ class Privacy_policy extends CI_Controller
             $settings = get_settings('system_settings', true);
             $this->data['title'] = 'Privacy Policy | ' . $settings['app_name'];
             $this->data['meta_description'] = 'Privacy Policy | ' . $settings['app_name'];
-            $this->data['privacy_policy'] = get_settings('privacy_policy');
-            $this->data['terms_n_condition'] = get_settings('terms_conditions');
+            
+            // Load translations for privacy_policy
+            $privacy_translations = $this->Setting_model->get_setting_translations('privacy_policy');
+            if (empty($privacy_translations)) {
+                $privacy_translations = [];
+            }
+            if (!isset($privacy_translations['en'])) {
+                $privacy_policy = get_settings('privacy_policy');
+                $privacy_translations['en'] = [
+                    'value' => isset($privacy_policy) ? $privacy_policy : ''
+                ];
+            }
+            $this->data['privacy_policy'] = isset($privacy_translations['en']['value']) ? $privacy_translations['en']['value'] : '';
+            $this->data['privacy_policy_translations'] = $privacy_translations;
+            
+            // Load translations for terms_conditions
+            $terms_translations = $this->Setting_model->get_setting_translations('terms_conditions');
+            if (empty($terms_translations)) {
+                $terms_translations = [];
+            }
+            if (!isset($terms_translations['en'])) {
+                $terms_condition = get_settings('terms_conditions');
+                $terms_translations['en'] = [
+                    'value' => isset($terms_condition) ? $terms_condition : ''
+                ];
+            }
+            $this->data['terms_n_condition'] = isset($terms_translations['en']['value']) ? $terms_translations['en']['value'] : '';
+            $this->data['terms_n_conditions_translations'] = $terms_translations;
+            
             if (!isset($_SESSION['branch_id'])) {
 
                 redirect('admin/branch', 'refresh');
@@ -63,6 +90,32 @@ class Privacy_policy extends CI_Controller
                 $terms_n_conditions_input_description = strip_tags($_POST['terms_n_conditions_input_description']);
                 $privacy_policy_input_description = strip_tags($_POST['privacy_policy_input_description']);
                 if(isset($terms_n_conditions_input_description) && !empty($terms_n_conditions_input_description) && isset($privacy_policy_input_description) && !empty($privacy_policy_input_description)){
+                    // Collect translation data for privacy_policy
+                    $privacy_policy_translations = [];
+                    if (isset($_POST['privacy_policy_translations']) && is_array($_POST['privacy_policy_translations'])) {
+                        $privacy_policy_translations = $_POST['privacy_policy_translations'];
+                    }
+                    if (!isset($privacy_policy_translations['en'])) {
+                        $privacy_policy_translations['en'] = [];
+                    }
+                    if (empty($privacy_policy_translations['en']['value']) && !empty($_POST['privacy_policy_input_description'])) {
+                        $privacy_policy_translations['en']['value'] = $_POST['privacy_policy_input_description'];
+                    }
+                    $_POST['privacy_policy_translations'] = $privacy_policy_translations;
+                    
+                    // Collect translation data for terms_conditions
+                    $terms_n_conditions_translations = [];
+                    if (isset($_POST['terms_n_conditions_translations']) && is_array($_POST['terms_n_conditions_translations'])) {
+                        $terms_n_conditions_translations = $_POST['terms_n_conditions_translations'];
+                    }
+                    if (!isset($terms_n_conditions_translations['en'])) {
+                        $terms_n_conditions_translations['en'] = [];
+                    }
+                    if (empty($terms_n_conditions_translations['en']['value']) && !empty($_POST['terms_n_conditions_input_description'])) {
+                        $terms_n_conditions_translations['en']['value'] = $_POST['terms_n_conditions_input_description'];
+                    }
+                    $_POST['terms_n_conditions_translations'] = $terms_n_conditions_translations;
+                    
                     $this->Setting_model->update_privacy_policy($_POST);
                     $this->Setting_model->update_terms_n_condtions($_POST);
                     $this->response['error'] = false;
