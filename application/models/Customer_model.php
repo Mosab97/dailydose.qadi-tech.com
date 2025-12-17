@@ -92,7 +92,7 @@ class Customer_model extends CI_Model
 
             $operate = '<a href="' . base_url('admin/orders?user_id=' . $row['id']) . '" class="btn btn-primary btn-xs mr-1 mb-1" title="View Orders" ><i class="fa fa-shopping-cart"></i></a>';
             $operate .= '<a  href="' . base_url('admin/transaction/view-transaction?user_id=' . $row['id']) . '" class="btn btn-danger btn-xs mr-1 mb-1" title="View Transactions"  ><i class="fa fa-money-bill-wave"></i></a>';
-            $operate .= ' <a href="javascript:void(0)" class="view_address  btn btn-warning btn-xs mr-1 mb-1" title="View Address" data-id="' . $row['id'] . '"  data-toggle="modal" data-target="#customer-address-modal" ><i class="far fa-address-book"></i></a>';
+            // $operate .= ' <a href="javascript:void(0)" class="view_address  btn btn-warning btn-xs mr-1 mb-1" title="View Address" data-id="' . $row['id'] . '"  data-toggle="modal" data-target="#customer-address-modal" ><i class="far fa-address-book"></i></a>';
             if ($row['active'] == '1') {
                 $operate .= '<a class="btn btn-success btn-xs update_active_status mr-1" data-table="users" title="Deactivate" href="javascript:void(0)" data-id="' . $row['id'] . '" data-status="' . $row['active'] . '" ><i class="fa fa-toggle-on"></i></a>';
             } else {
@@ -151,7 +151,7 @@ class Customer_model extends CI_Model
 
                 $operate = '<a href="' . base_url('admin/orders?user_id=' . $row['id']) . '" class="btn btn-primary btn-xs mr-1 mb-1" title="View Orders" ><i class="fa fa-shopping-cart"></i></a>';
                 $operate .= '<a  href="' . base_url('admin/transaction/view-transaction?user_id=' . $row['id']) . '" class="btn btn-danger btn-xs mr-1 mb-1" title="View Transactions"  ><i class="fa fa-money-bill-wave"></i></a>';
-                $operate .= ' <a href="javascript:void(0)" class="view_address  btn btn-warning btn-xs mr-1 mb-1" title="View Address" data-id="' . $row['id'] . '"  data-toggle="modal" data-target="#customer-address-modal" ><i class="far fa-address-book"></i></a>';
+                // $operate .= ' <a href="javascript:void(0)" class="view_address  btn btn-warning btn-xs mr-1 mb-1" title="View Address" data-id="' . $row['id'] . '"  data-toggle="modal" data-target="#customer-address-modal" ><i class="far fa-address-book"></i></a>';
                 if ($row['active'] == '1') {
                     $operate .= '<a class="btn btn-success btn-xs update_active_status mr-1" data-table="users" title="Deactivate" href="javascript:void(0)" data-id="' . $row['id'] . '" data-status="' . $row['active'] . '" ><i class="fa fa-toggle-on"></i></a>';
                 } else {

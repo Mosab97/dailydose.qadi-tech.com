@@ -37,7 +37,7 @@
                             </a>
                         </div>
 
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <a href="<?= base_url('admin/setting/system-status') ?>">
                                 <div class="card border border-secondary-secondary-secondary-secondary mt-4 settings-card hover-card">
                                     <div class="card-body card-hover">
@@ -93,9 +93,9 @@
                                     </div>
                                 </div>
                             </a>
-                        </div>
+                        </div> -->
 
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <a href="<?= base_url('admin/notification-settings') ?>">
                                 <div class="card border border-secondary-secondary-secondary-secondary mt-4 settings-card hover-card">
                                     <div class="card-body card-hover">
@@ -113,7 +113,7 @@
                                     </div>
                                 </div>
                             </a>
-                        </div>
+                        </div> -->
 
                         <div class="col-md-3">
                             <a href="<?= base_url('admin/contact-us') ?>">
@@ -175,7 +175,7 @@
                             </a>
                         </div>
 
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <a href="<?= base_url('admin/rider-privacy-policy') ?>">
                                 <div class="card border border-secondary-secondary-secondary-secondary mt-4 settings-card hover-card">
                                     <div class="card-body card-hover">
@@ -233,7 +233,7 @@
                                     </div>
                                 </div>
                             </a>
-                        </div>
+                        </div> -->
                         <!-- custom notification -->
                         <div class="col-md-3">
                             <a href="<?= base_url('admin/custom_notification') ?>">
@@ -257,7 +257,7 @@
                         <!-- end -->
 
                         <!-- authetication mode -->
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <a href="<?= base_url('admin/authentication-settings') ?>">
                                 <div class="card border border-secondary-secondary-secondary-secondary mt-4 settings-card hover-card">
                                     <div class="card-body card-hover">
@@ -275,11 +275,11 @@
                                     </div>
                                 </div>
                             </a>
-                        </div>
+                        </div> -->
                         <!-- end -->
 
                         <!-- SMS Gateway -->
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <a href="<?= base_url('admin/sms-gateway-settings') ?>">
                                 <div class="card border border-secondary-secondary-secondary-secondary mt-4 settings-card hover-card">
                                     <div class="card-body card-hover">
@@ -297,7 +297,7 @@
                                     </div>
                                 </div>
                             </a>
-                        </div>
+                        </div> -->
                         <!-- end -->
 
                     </div>
